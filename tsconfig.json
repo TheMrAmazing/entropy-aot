@@ -1,0 +1,36 @@
+{
+    "compilerOptions": {
+		"module":  "ESNext",
+		"target": "ESNext",
+		"moduleResolution": "Node",
+		"lib": [
+			"ESNext",
+			"DOM"
+		],
+		"esModuleInterop": true,
+		"paths": {
+			"@lib/*": ["./lib/*"],
+			"@client/*": ["./entropy-client/*"],
+			"@server/*": ["./entropy-server/*"],
+			"@db/*": ["./entropy-db/*"]
+		},
+		"sourceMap": true,
+		"inlineSourceMap": true,
+		"alwaysStrict": true,
+		"allowUnreachableCode": false,
+		"noImplicitAny": false,
+		"strictNullChecks": false,
+		"noImplicitReturns": true,
+		"noUncheckedIndexedAccess": false,
+		"noUnusedLocals": false, 
+		"noUnusedParameters": false,
+		"types": ["node", "dom"]
+    },
+	"ts-node": {
+		"esm": true,
+		"experimentalSpecifierResolution": "node"
+	},
+    "exclude": [
+      "node_modules/**/*"
+    ]
+}

@@ -1,0 +1,38 @@
+{
+    "version": "2.0.0",
+    
+    "tasks": [
+        {
+            "label": "start-server",
+            "type": "npm",
+            "script": "debug",
+            "problemMatcher": [],
+            "isBackground": true,
+            "options": {
+                "env": {
+                    "DBCONNECT": "Driver=PostgreSQL;Server=localhost;Port=5432;Database=entropy;Uid=entropy;Pwd=Fried Chicken;",
+                    "ORIGINS": "*",
+                    "PORT": "1337",
+                    "RATE_LIMITER_DURATION": "1",
+                    "RATE_LIMITER_POINTS": "100",
+                    "SECRET": "super-duper-secret"
+                }
+            }
+        },
+        {
+            "label": "post-debug-kill",
+            "type": "process",
+            "command": [
+                "${input:terminate}"
+            ]
+        },
+    ],
+    "inputs": [
+        {
+          "id": "terminate",
+          "type": "command",
+          "command": "workbench.action.tasks.terminate",
+          "args": "terminateAll"
+        }
+    ]
+}
