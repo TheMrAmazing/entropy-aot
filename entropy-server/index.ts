@@ -1,6 +1,6 @@
 import * as http from 'http'
 import {hostDir} from './src/static'
-import './src/transformer'
+// import './src/transformer'
 
 async function start() {
     let urls = await hostDir()
