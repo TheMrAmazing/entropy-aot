@@ -1,4 +1,4 @@
-import { Component } from '@lib/Component'
+import { Component } from 'lib/Component'
 import RegisterDialog from './RegisterDialog'
 
 export default class LoginDialog extends Component {

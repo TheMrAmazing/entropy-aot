@@ -1,4 +1,4 @@
-import { Component } from '@lib/Component'
+import { Component } from 'lib/Component'
 import LoginDialog from './LoginDialog'
 import state from '../js/globalState'
 import DomainDialog from './DomainDialog'

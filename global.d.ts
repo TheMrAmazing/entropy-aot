@@ -1,6 +1,6 @@
-export * from  '@lib/hyperscript-helpers'
-import {VNode} from '@lib//snabbdom/vnode'
-import { Children, Properties} from '@lib/hyperscript-helpers'
+export * from  'lib/hyperscript-helpers'
+import {VNode} from 'lib//snabbdom/vnode'
+import { Children, Properties} from 'lib/hyperscript-helpers'
 
 declare global {
     //==================================DOM Helper Functions==================================

@@ -1,5 +1,5 @@
-import { Component } from '@lib/Component'
-import {h} from '@lib/snabbdom'
+import { Component } from 'lib/Component'
+import {h} from 'lib/snabbdom'
 
 export default class NewProjectDialog extends Component {
     constructor() {

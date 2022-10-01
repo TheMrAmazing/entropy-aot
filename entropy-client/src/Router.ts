@@ -1,4 +1,4 @@
-import {Component} from '@lib/Component'
+import {Component} from 'lib/Component'
 import Browse from './views/Browse'
 import Channel from './views/Channel'
 import Developer from "./views/Developer"

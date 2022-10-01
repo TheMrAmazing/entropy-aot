@@ -4,11 +4,7 @@ import { resolve } from 'path'
 export default defineConfig({
     resolve: {
         alias: {
-            '@': resolve(__dirname, './src'),
-            '@lib': '../lib/',
-			'@client': '../entropy-client/',
-			'@server': '../entropy-server/',
-			'@db': '../entropy-db/'
+            '@': resolve(__dirname, './src')
         }
     },
     root:'./entropy-client',

@@ -1,4 +1,4 @@
-import { BaseEntity } from '@lib/praxis/BaseEntity'
+import { BaseEntity } from 'lib/praxis/BaseEntity'
 
 //@ts-ignore
 class Database extends BaseEntity {

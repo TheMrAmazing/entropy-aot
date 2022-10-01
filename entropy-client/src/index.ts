@@ -1,5 +1,5 @@
-import '@lib/hyperscript-helpers'
-import { patch } from '@lib/patch'
+import 'lib/hyperscript-helpers'
+import { patch } from 'lib/patch'
 import './wc/TextInput'
 import './wc/Terminal'
 import { createAsciiBorderStyleSheet } from './js/border'
@@ -7,7 +7,7 @@ import { theme, borders } from './js/theme'
 import { router } from './Router'
 import state from './js/globalState'
 import { get } from './js/utils'
-import { Component } from '@lib/Component'
+import { Component } from 'lib/Component'
 globalThis.Component = Component
 
 requestAnimationFrame(() => {

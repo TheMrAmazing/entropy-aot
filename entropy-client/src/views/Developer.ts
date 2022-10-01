@@ -1,4 +1,4 @@
-import {Component} from '@lib/Component'
+import {Component} from 'lib/Component'
 import Header from '../components/Header'
 import NewProjectDialog from '../components/NewProjectDialog'
 

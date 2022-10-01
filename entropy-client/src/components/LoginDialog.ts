@@ -1,8 +1,8 @@
-import {Component} from '@lib/Component'
+import {Component} from 'lib/Component'
 import RegisterDialog from './RegisterDialog'
 import state from '../js/globalState'
 import { post } from '../js/utils'
-import {h} from '@lib/snabbdom'
+import {h} from 'lib/snabbdom'
 
 export default class LoginDialog extends Component {
     registerDialog: RegisterDialog

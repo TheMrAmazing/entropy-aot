@@ -1,4 +1,4 @@
-import { Component } from '@lib/Component'
+import { Component } from 'lib/Component'
 export default class WidgetCard extends Component {
     widget: any
     constructor(widget) {

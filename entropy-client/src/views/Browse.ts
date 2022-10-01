@@ -1,8 +1,8 @@
-import { h } from '@lib/snabbdom'
+import { h } from 'lib/snabbdom'
 import Header from '../components/Header'
 import show from '../js/CanvasCycle/ShowScene'
 import {get} from '../js/utils'
-import { Component } from '@lib/Component'
+import { Component } from 'lib/Component'
 
 const zeroPad = (num, places) => String(num).padStart(places, '0')
 export default class Browse extends Component {
