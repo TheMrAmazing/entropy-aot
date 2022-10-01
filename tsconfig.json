@@ -9,10 +9,6 @@
 		],
 		"esModuleInterop": true,
 		"paths": {
-			"@lib/*": ["./lib/*"],
-			"@client/*": ["./entropy-client/*"],
-			"@server/*": ["./entropy-server/*"],
-			"@db/*": ["./entropy-db/*"]
 		},
 		"alwaysStrict": true,
 		"allowUnreachableCode": false,

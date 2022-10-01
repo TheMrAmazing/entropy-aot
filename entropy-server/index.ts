@@ -1,4 +1,4 @@
-import { WSController } from '../lib/praxis/WSController'
+import { WSController } from 'lib/praxis/WSController'
 
 let ws = new WSController()
 
