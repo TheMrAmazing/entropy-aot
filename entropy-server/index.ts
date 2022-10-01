@@ -1,55 +1,17 @@
-import * as http from 'http'
-import {hostDir} from './src/static'
-// import './src/transformer'
+import { WSController } from '../lib/praxis/WSController'
+
+let ws = new WSController()
 
 async function start() {
-    let urls = await hostDir()
-    const server = http.createServer((req, res) => {
-    
-        console.log(req.url)
-		if(req.url.endsWith('.html')) {
-			res.setHeader('Content-Type', 'text/html')
-		} else if (req.url.endsWith('.js')) {
-			res.setHeader('Content-Type', 'text/javascript')
-		} else {
-			res.setHeader('Content-Type', 'text/javascript')
-		}
-    
-    //     if (req.method !== 'POST' || req.url !== '/user') {
-    //         res.statusCode = 405;
-    //         res.end('{"error":"METHOD_NOT_ALLOWED"}');
-    //     return;
-    //   }
-    
-    //   let body = ''
-    
-    //   req.on('data', (data) => {
-    //     // This function is called as chunks of body are received
-    //     body += data;
-    //   });
-    
-    //   req.on('end', () => {
-    //     // This function is called once the body has been fully received
-    //     let parsed;
-    
-    //     try {
-    //       parsed = JSON.parse(body);
-    //     } catch (e) {
-    //       res.statusCode = 400;
-    //       res.end('{"error":"CANNOT_PARSE"}')
-    //     }
-    let file = urls[req.url]
-	if(file) {
-		res.end(file)
-	} else {
-		res.end('')
-	}
-    //   })
-    })
-    
-    server.listen(1337, () => {
-      console.log('Server running at http://localhost:1337/');
-    })
-
+    const db = ws.controller.Remote
+    //writing to the database is done by attaching any piece of data to the Remote object
+    // db.test = {data: 'I am a new piece of data in the database'}
+    db.bellbell = {pugs: {gee: 'I am another string'}, thing: 'boo'}
+    //retrieving from the database is done by simply awaiting any piece of data on the Remote
+    let res = await db.bellbell
+    let res2 = await res.pugs
+    console.log(res)
+    console.log(res2)
 }
-start()
+
+setTimeout(start, 5000)

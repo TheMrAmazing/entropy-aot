@@ -14,8 +14,6 @@
 			"@server/*": ["./entropy-server/*"],
 			"@db/*": ["./entropy-db/*"]
 		},
-		"sourceMap": true,
-		"inlineSourceMap": true,
 		"alwaysStrict": true,
 		"allowUnreachableCode": false,
 		"noImplicitAny": false,

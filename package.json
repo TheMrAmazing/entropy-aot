@@ -2,7 +2,7 @@
   "type": "module",
   "scripts": {
     "start": "node ./dist/index.js",
-    "debug": "ts-node ./entropy-server/index",
+    "debug": "ts-node ./entropy-db/index",
     "build": "tsc",
     "serve:client": "vite",
     "build:client": "vue-tsc --noEmit && vite build"
@@ -16,7 +16,6 @@
     "@types/node": "^18.7.23",
     "@types/websocket": "^1.0.5",
     "@types/ws": "^8.5.3",
-    "@zerollup/ts-transform-paths": "^1.7.18",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.1.0",
     "ttypescript": "^1.5.13",

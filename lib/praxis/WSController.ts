@@ -1,13 +1,13 @@
 import { serialize, deserialize } from 'v8'
-import {w3cwebsocket as Client} from 'websocket'
 import { Controller } from './Controller'
+import {WebSocket}from 'ws'
 
 export class WSController {
-    wss: Client
+    wss: WebSocket
     controller: Controller
     constructor() {
         this.controller = new Controller()
-        this.wss = new Client('ws://localhost:7071/')
+        this.wss = new WebSocket('ws://localhost:3000/')
         this.wss.onopen = () => {
             this.controller.Messenger = {
                 postMessage: (message: any) => {

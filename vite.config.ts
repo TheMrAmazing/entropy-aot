@@ -4,11 +4,16 @@ import { resolve } from 'path'
 export default defineConfig({
     resolve: {
         alias: {
-            '@': resolve(__dirname, './src')
+            '@': resolve(__dirname, './src'),
+            '@lib': '../lib/',
+			'@client': '../entropy-client/',
+			'@server': '../entropy-server/',
+			'@db': '../entropy-db/'
         }
     },
+    root:'./entropy-client',
     server: {
-        port: 3000,
+        port: 8080,
         proxy: {
             '/api': {
                 target: 'http://localhost:1337',
@@ -19,12 +24,7 @@ export default defineConfig({
                 target: 'http://localhost:1337',
                 changeOrigin: true,
                 ws: true
-            },
-            // '/channel' : {
-            //     target: 'http://localhost:3000',
-            //     changeOrigin: true,
-            //     ws: true
-            // }
+            }
         }
     }
 })

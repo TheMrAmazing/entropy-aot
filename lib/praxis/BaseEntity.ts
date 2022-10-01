@@ -28,7 +28,7 @@ export function BaseEntity() {
         if (val) {
             return val
         } else {
-            const filename = './json/' + ref.replaceAll('/', '_') + '.json'
+            const filename = './entropy-db/json/' + ref.replaceAll('/', '_') + '.json'
             if (existsSync(filename)) {
                 let json = readFileSync(filename).toString('utf8')
                 if (json != '') {
@@ -59,7 +59,7 @@ export function BaseEntity() {
                     this.paths.set(value, pointer)
                     Object.keys(value).forEach(key => value[key] = replacer([...path, key], value[key]))   
                     this.refs.set(pointer, value)
-                    writeFileSync('./json/' + pointer.replaceAll('/', '_') + '.json', JSON.stringify(this.refs.get(pointer)))
+                    writeFileSync('./entropy-db/json/' + pointer.replaceAll('/', '_') + '.json', JSON.stringify(this.refs.get(pointer)))
                     value = { $ref: pointer }
                 }
             }
@@ -87,7 +87,7 @@ export function BaseEntity() {
                 if(isObject(target)) {
                     let pointer = toPointer([...path])
                     this.refs.set(pointer, target)
-                    writeFile('./json/' + pointer.replaceAll('/', '_') + '.json', JSON.stringify(this.refs.get(pointer)))
+                    writeFile('./entropy-db/json/' + pointer.replaceAll('/', '_') + '.json', JSON.stringify(this.refs.get(pointer)))
                 }
                 return true
             }

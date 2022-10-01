@@ -1,51 +1,48 @@
 import ts from 'typescript'
 
-const formatHost: ts.FormatDiagnosticsHost = {
-        getCanonicalFileName: path => path,
-        getCurrentDirectory: ts.sys.getCurrentDirectory,
-        getNewLine: () => ts.sys.newLine
-    }
+export function extract(code: string) {
+    const filename = "test.ts"
     
-function watchMain() {
-    const configPath = ts.findConfigFile(
-        /*searchPath*/ "./",
-        ts.sys.fileExists,
-        "tsconfig.json"
+    const sourceFile = ts.createSourceFile(
+        filename, code, ts.ScriptTarget.Latest
     )
-    if (!configPath) {
-        throw new Error("Could not find a valid 'tsconfig.json'.")
+    
+    const transformerFactory: ts.TransformerFactory<ts.Node> = (
+        context: ts.TransformationContext
+    ) => {
+        return (rootNode) => {
+            function visit(node: ts.Node): ts.Node {
+                node = ts.visitEachChild(node, visit, context)
+                if(ts.isImportDeclaration(node)) {
+                    let filename: string = (node.moduleSpecifier as any).text
+                    if(filename.charAt(0) == '@') {
+                        filename = filename.replace('@lib/', '/')
+                    }
+                    let literal = ts.factory.createStringLiteral(filename + '.js')
+                    //@ts-ignore
+                    node.moduleSpecifier = literal
+                    return node
+        
+                } else {
+                    return node;
+                }
+            }
+            return ts.visitNode(rootNode, visit);
+        }
     }
-
-    const createProgram = ts.createSemanticDiagnosticsBuilderProgram
-    const host = ts.createWatchCompilerHost(
-        configPath,
-        {},
-        ts.sys,
-        createProgram,
-        reportDiagnostic,
-        reportWatchStatusChanged
+    
+    const transformationResult = ts.transform(
+        sourceFile, [transformerFactory]
     )
-
-    const origCreateProgram = host.createProgram
-        host.createProgram = (rootNames: ReadonlyArray<string>, options, host, oldProgram) => {
-        console.log("** We're about to create the program! **")
-        return origCreateProgram(rootNames, options, host, oldProgram)
-    }
-    const origPostProgramCreate = host.afterProgramCreate
-
-    host.afterProgramCreate = program => {
-        console.log("** We finished making the program! **")
-        origPostProgramCreate!(program)
-    }
-    ts.createWatchProgram(host)
-}
     
-function reportDiagnostic(diagnostic: ts.Diagnostic) {
-    console.error("Error", diagnostic.code, ":", ts.flattenDiagnosticMessageText( diagnostic.messageText, formatHost.getNewLine()))
+    const transformedSourceFile = transformationResult.transformed[0]
+    const printer = ts.createPrinter()
+    
+    const result = printer.printNode(
+        ts.EmitHint.Unspecified,
+        transformedSourceFile,
+        undefined
+    )
+    return result
 }
 
-function reportWatchStatusChanged(diagnostic: ts.Diagnostic) {
-    console.info(ts.formatDiagnostic(diagnostic, formatHost))
-}
-    
-watchMain()

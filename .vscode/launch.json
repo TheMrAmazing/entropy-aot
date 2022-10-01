@@ -3,7 +3,7 @@
     "configurations": [
         {
             "name": "Launch Program",
-            "program": "${workspaceFolder}/entropy-server/index",
+            "program": "${workspaceFolder}/entropy-db/index",
             "request": "launch",
             "skipFiles": [
                 "<node_internals>/**",
@@ -19,28 +19,6 @@
                 "tsconfig-paths/register"
             ],
             "internalConsoleOptions": "openOnSessionStart"
-        },
-    
-        {
-            "type": "node",
-            "request": "attach",
-            "name": "Server",
-            "protocol": "inspector",
-            "port": 9229,
-            "restart": true,
-            "cwd": "${workspaceRoot}",
-            "preLaunchTask": "start-server",
-            "postDebugTask": "post-debug-kill"
-        },
-        {
-            "name": "Launch Chrome Debugger",
-            "type": "chrome",
-            "request": "launch",
-            "port": 9222,
-            "url": "http://localhost:3000/",
-            "webRoot": "${workspaceRoot}",
-            "enableContentValidation": false,
-            "sourceMaps": true,
         }
     ]
 }
