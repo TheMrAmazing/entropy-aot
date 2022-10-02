@@ -4,7 +4,7 @@
     "start": "node ./dist/index.js",
     "debug": "ts-node ./entropy-db/index",
     "build": "tsc",
-    "serve:client": "vite",
+    "serve:client": "npx vite",
     "build:client": "vue-tsc --noEmit && vite build"
   },
   "dependencies": {

@@ -1,5 +1,5 @@
-import { Receiver } from 'lib/praxis/Receiver'
-import { WSReceiver } from 'lib/praxis/WSReceiver'
+import { Receiver } from 'lib/praxis/remote/Receiver'
+import { WSReceiver } from 'lib/praxis/shims/WSReceiver'
 import {db} from './src/Database'
 
 const receiver = new Receiver(db, WSReceiver, 3000)

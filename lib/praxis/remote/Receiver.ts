@@ -1,4 +1,4 @@
-import {PathType, MessageShim, Messenger, Primitive, ObjectID, CanStructuredClone, Result, CallbackID, Command, GetID, FlushID, ControllerMessage, Arg, ArgType, ControllerMessageType, ReceiverMessage, ReceiverMessageType, ReceiverMessageDone, ReceiverMessageCallback, CommandType, ControllerMessageCommands, ControllerMessageCleanup, CommandCall, CommandConstruct, CommandSet, CommandGet} from './types'
+import {PathType, MessageShim, Messenger, Primitive, ObjectID, CanStructuredClone, Result, CallbackID, Command, GetID, FlushID, ControllerMessage, Arg, ArgType, ControllerMessageType, ReceiverMessage, ReceiverMessageType, ReceiverMessageDone, ReceiverMessageCallback, CommandType, ControllerMessageCommands, ControllerMessageCleanup, CommandCall, CommandConstruct, CommandSet, CommandGet} from '../types'
 
 export class Receiver {
 

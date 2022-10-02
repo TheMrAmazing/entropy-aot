@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../entropy-client"
+		},
+		{
+			"path": "../entropy-db"
+		},
+		{
+			"path": "../entropy-server"
+		},
+		{
+			"path": "../lib"
+		}
+	],
+	"settings": {}
+}

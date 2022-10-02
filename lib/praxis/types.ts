@@ -1,5 +1,5 @@
 import { Blob } from 'buffer'
-import { Receiver } from './Receiver'
+import { Receiver } from './remote/Receiver'
 
 export type Primitive = undefined | null | boolean | number | string | Blob | ArrayBuffer
 
@@ -117,6 +117,22 @@ export type CommandConstruct = {
     path: PathType,
     argsData: Arg[],
     returnId: ObjectID
+}
+
+export class RemoteObject {
+    _objectId: ObjectID
+
+    constructor(objectId: ObjectID) {
+        this._objectId = objectId
+    }
+}
+
+export class RemoteProperty extends RemoteObject{
+    _path: PathType
+    constructor(objectId: ObjectID, path: PathType) {
+        super(objectId)
+        this._path = path
+    }
 }
 
 export function CanStructuredClone(o: any) {

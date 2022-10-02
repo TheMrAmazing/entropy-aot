@@ -1,9 +1,42 @@
 {
     "version": "0.2.0",
+    "compounds": [
+        {
+            "name": "Debug Entropy",
+            "configurations": ["Database", "Server", "Client"]
+        }
+    ],
     "configurations": [
         {
-            "name": "Launch Program",
+            "name": "Client",
+            "request": "launch",
+            "preLaunchTask": "start-client",
+            "type": "chrome",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}/entropy-client"
+        },
+        {
+            "name": "Database",
             "program": "${workspaceFolder}/entropy-db/index",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**",
+                "node_modules/**"
+            ],
+            "type": "node",
+            "runtimeExecutable": "node",
+            "runtimeArgs": [
+                "--loader",
+                "ts-node/esm",
+                "--experimental-specifier-resolution=node",
+                "-r",
+                "tsconfig-paths/register"
+            ],
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "Server",
+            "program": "${workspaceFolder}/entropy-server/index",
             "request": "launch",
             "skipFiles": [
                 "<node_internals>/**",

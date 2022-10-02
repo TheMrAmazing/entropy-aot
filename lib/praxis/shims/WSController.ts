@@ -1,5 +1,5 @@
 import { serialize, deserialize } from 'v8'
-import { Controller } from './Controller'
+import { Controller } from '../remote/Controller'
 import {WebSocket}from 'ws'
 
 export class WSController {

@@ -1,5 +1,5 @@
 import { serialize, deserialize } from 'v8'
-import { Receiver } from './Receiver'
+import { Receiver } from '../remote/Receiver'
 import {WebSocketServer} from 'ws'
 
 export class WSReceiver {
@@ -8,6 +8,7 @@ export class WSReceiver {
     constructor(receiver: Receiver, port: number) {
         this.receiver = receiver
         this.wss = new WebSocketServer({ port })
+        console.log('Listening on port: ' + port)
         this.wss.on('connection', ws => {
             ws.onmessage = e => {
                 this.receiver.Messenger = {
