@@ -73,6 +73,9 @@ export function BaseEntity() {
                 if(key == '_raw') {
                     return target
                 }
+                // if(target.$ref) {
+                //     target = getRef(target.$ref)
+                // }
                 if(isObject(target[key])) {
                     if (target[key].$ref) {
                         let proxy = new Proxy(getRef(target[key].$ref), nestedProxy([...path, key]))

@@ -144,11 +144,15 @@ export class Controller {
 			
 			this.pendingGetResolves.delete(getId)
             let val = this.UnwrapArg(valueData) as any
-            Reflect.ownKeys(val).forEach(key => {
-                if(val[key].$ref != undefined) {
-                    val[key] = new Proxy(val[key], refProxy(this, resolve.objectId,[...resolve.path, key] ))
-                }
-            })
+			if(val.$ref != undefined) {
+				val = new Proxy(val, refProxy(this, resolve.objectId,[...resolve.path] ))		
+			} else {
+				Reflect.ownKeys(val).forEach(key => {
+					if(val[key].$ref != undefined) {
+						val[key] = new Proxy(val[key], refProxy(this, resolve.objectId,[...resolve.path, key] ))
+					}
+				})
+			}
 			resolve.func(val)
 		}
 		

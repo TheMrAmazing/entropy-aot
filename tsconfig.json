@@ -8,17 +8,20 @@
 			"DOM"
 		],
 		"esModuleInterop": true,
-		"paths": {
-		},
 		"alwaysStrict": true,
 		"allowUnreachableCode": false,
 		"noImplicitAny": false,
+		"composite": true,
+		"declaration": true,
+		"inlineSourceMap": true,
+		"sourceMap": true,
 		"strictNullChecks": false,
 		"noImplicitReturns": true,
 		"noUncheckedIndexedAccess": false,
 		"noUnusedLocals": false, 
 		"noUnusedParameters": false,
-		"types": ["node", "dom"]
+		"types": ["node", "dom"],
+		"outDir": "dist"
     },
 	"ts-node": {
 		"esm": true,

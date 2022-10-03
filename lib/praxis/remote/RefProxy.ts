@@ -3,8 +3,11 @@ import { Controller } from "./Controller"
 
 export function refProxy(controller: Controller, objectId: ObjectID, path:PathType) {
     return {
-        get:(target:any, property: string | symbol, receiver: any) => {
-            if(property == 'then') {
+        get:(target:any, key: string | symbol, receiver: any) => {
+            if(key == '_raw') {
+                return target
+            }
+            if(key == 'then') {
                 if (target.$ref != undefined) {
                     return (resolve, reject) => {
                         const getId = Math.random() * Number.MAX_SAFE_INTEGER
@@ -19,8 +22,8 @@ export function refProxy(controller: Controller, objectId: ObjectID, path:PathTy
                 }
                 return undefined
             }
-            path.push(property)
-            const ret = new Proxy(target[property], refProxy(controller, objectId, path))
+            path.push(key)
+            const ret = new Proxy(target[key], refProxy(controller, objectId, path))
             return ret
         }
     }

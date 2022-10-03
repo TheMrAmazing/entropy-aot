@@ -15,12 +15,23 @@ export function propertyProxy<T extends RemoteProperty>(controller: Controller) 
         set: (target: T, property: string | symbol, value: any, receiver: any) => {
             const nextPath = target._path.slice()
             nextPath.push(property)
-            controller.AddToQueue({
-                type: CommandType.Set,
-                objectId: target._objectId,
-                path: nextPath,
-                argsData: controller.WrapArg(value)
-            })
+            if(value[controller.TargetSymbol]) {
+                value = value[controller.TargetSymbol]
+            } else {
+                Reflect.ownKeys(value).forEach(key => {
+                    if(value[key][controller.TargetSymbol]) {
+                        value[key] = value[key][controller.TargetSymbol]
+                    }
+                })
+            }
+
+            if(value)
+                controller.AddToQueue({
+                    type: CommandType.Set,
+                    objectId: target._objectId,
+                    path: nextPath,
+                    argsData: controller.WrapArg(value)
+                })
             return true
         },
         apply: (target: T, thisArg, argumentsList: any[]) => {
