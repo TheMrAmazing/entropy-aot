@@ -11,7 +11,7 @@ export class WSReceiver {
         console.log('Listening on port: ' + port)
         this.wss.on('connection', ws => {
             ws.onmessage = e => {
-                this.receiver.Messenger = {
+                this.receiver.messenger = {
                     postMessage: (message: any) => {
                         ws.send(serialize(message))
                     }
@@ -21,7 +21,7 @@ export class WSReceiver {
             }
         })
         this.wss.on('close', e => {
-            this.receiver.Messenger = undefined
+            this.receiver.messenger = undefined
         })
     }
 }

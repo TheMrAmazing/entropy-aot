@@ -1,8 +1,8 @@
 {
     "compilerOptions": {
-		"module":  "ESNext",
-		"target": "ESNext",
+		"module":  "CommonJS",
 		"moduleResolution": "Node",
+		"target": "ESNext",
 		"lib": [
 			"ESNext",
 			"DOM"
@@ -21,6 +21,16 @@
 		"types": ["node", "dom"],
 		"outDir": "dist"
     },
+	"ts-node": {
+		"esm": true,
+		"experimentalSpecifierResolution": "node",
+		"compiler": "ttypescript",
+		"compilerOptions": {
+			"plugins": [
+			  { "transform": "./lib/praxis/dev/transformer.ts" }
+			]
+		}
+	},
     "exclude": [
       "node_modules/**/*"
     ]

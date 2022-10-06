@@ -1,5 +1,4 @@
-import {writeFile} from 'fs/promises'
-import {existsSync, readFileSync, writeFileSync} from 'fs'
+import {existsSync, readFileSync, writeFileSync, promises} from 'node:fs'
 
 function isObject(value: any) {
     return typeof value === 'object'
@@ -44,8 +43,6 @@ export function BaseEntity() {
         return !val
     })
     keys.forEach(key => {
-        console.log(key)
-        // Object.defineProperty(this, key, {value: base[key], enumerable: true})
         this[key] = base[key]
     })
     
@@ -96,7 +93,7 @@ export function BaseEntity() {
                 if(isObject(target)) {
                     let pointer = toPointer([...path])
                     this.refs.set(pointer, target)
-                    writeFile('./entropy-db/json/' + pointer.replaceAll('/', '_') + '.json', JSON.stringify(this.refs.get(pointer)))
+                    promises.writeFile('./entropy-db/json/' + pointer.replaceAll('/', '_') + '.json', JSON.stringify(this.refs.get(pointer)))
                 }
                 return true
             }

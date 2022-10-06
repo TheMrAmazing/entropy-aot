@@ -14,5 +14,8 @@ export class Database extends BaseEntity {
             this.domains = []
         }
     }
+    log() {
+        console.log('I am a new string')
+    }
 }
 export const db = new Database()

@@ -33,10 +33,10 @@ export class Controller {
 	pendingFlushResolves: Map<FlushID, ResolveFunc> = new Map()
     isPendingFlush: boolean = false
 
-    ObjectSymbol = Symbol()
-    TargetSymbol = Symbol()
+    static ObjectSymbol = Symbol()
+    static TargetSymbol = Symbol()
 
-    Messenger: Messenger
+    messenger: Messenger
 
     Remote: any = this.MakeObject(0)
 
@@ -61,14 +61,14 @@ export class Controller {
 
     WrapArg(arg: any): Arg {
 		if (typeof arg === "function") {
-			const objectId = arg[this.ObjectSymbol]
+			const objectId = arg[Controller.ObjectSymbol]
 			if (typeof objectId === "number") {
 				return {
                     type: ArgType.Object,
                     value: objectId
                 }
 			}
-			const propertyTarget = arg[this.TargetSymbol]
+			const propertyTarget = arg[Controller.TargetSymbol]
 			if (propertyTarget) {
 				return {
                     type: ArgType.ObjectProperty,
@@ -119,7 +119,7 @@ export class Controller {
 		
 		const flushId = this.nextFlushId++
 		
-        this.Messenger.postMessage({
+        this.messenger.postMessage({
             type: ControllerMessageType.Commands,
             commands: this.commandQueue,
             flushId: flushId

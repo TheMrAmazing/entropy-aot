@@ -6,8 +6,7 @@ export class WSController {
     wss: WebSocket
     controller: Controller
     connected: boolean = false
-    constructor() {
-    }
+    constructor() {}
 
     connect(url:string) {
         return new Promise((resolve, reject) => {
@@ -15,7 +14,7 @@ export class WSController {
                 this.wss = new WebSocket(url)
                 this.wss.onopen = () => {
                     this.controller = new Controller()
-                    this.controller.Messenger = {
+                    this.controller.messenger = {
                         postMessage: (message: any) => {
                             this.wss.send(serialize(message))
                         }

@@ -4,7 +4,7 @@ import { Controller } from "./Controller"
 export function propertyProxy<T extends RemoteProperty>(controller: Controller) {
     let ret: ProxyHandler<T> = {
         get:(target:T, key: string | symbol, receiver: any) => {
-            if (key === controller.TargetSymbol)
+            if (key === Controller.TargetSymbol)
                 return target
 
             const nextPath = target._path.slice(0)
@@ -15,12 +15,12 @@ export function propertyProxy<T extends RemoteProperty>(controller: Controller) 
         set: (target: T, property: string | symbol, value: any, receiver: any) => {
             const nextPath = target._path.slice()
             nextPath.push(property)
-            if(value[controller.TargetSymbol]) {
+            if(value[Controller.TargetSymbol]) {
                 // value = value[controller.TargetSymbol]
             } else {
                 Reflect.ownKeys(value).forEach(key => {
-                    if(value[key][controller.TargetSymbol]) {
-                        value[key] = value[key][controller.TargetSymbol]
+                    if(value[key][Controller.TargetSymbol]) {
+                        value[key] = value[key][Controller.TargetSymbol]
                     }
                 })
             }

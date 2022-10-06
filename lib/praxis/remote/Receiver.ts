@@ -1,8 +1,8 @@
 import {PathType, MessageShim, Messenger, Primitive, ObjectID, CanStructuredClone, Result, CallbackID, Command, GetID, FlushID, ControllerMessage, Arg, ArgType, ControllerMessageType, ReceiverMessage, ReceiverMessageType, ReceiverMessageDone, ReceiverMessageCallback, CommandType, ControllerMessageCommands, ControllerMessageCleanup, CommandCall, CommandConstruct, CommandSet, CommandGet} from '../types'
-
+import {Controller} from './Controller'
 export class Receiver {
 
-    Messenger: Messenger = undefined
+    messenger: Messenger = undefined
     idMap: Map<ObjectID, any>
     nextObjectId: ObjectID = -1
     
@@ -54,7 +54,7 @@ export class Receiver {
     }
 
     GetCallbackShim(id: CallbackID) {
-        return ((...args) => this.Messenger!.postMessage({
+        return ((...args) => this.messenger!.postMessage({
             type: ReceiverMessageType.Callback,
             id: id,
             args: args.map(arg => this.WrapArg(arg))
@@ -84,10 +84,10 @@ export class Receiver {
         }
     }
 
-    OnMessage(data: ControllerMessage) {
+    async OnMessage(data: ControllerMessage) {
         switch (data.type) {
         case ControllerMessageType.Commands:
-            this.OnCommandsMessage(data)
+            await this.OnCommandsMessage(data)
             break
         case ControllerMessageType.Cleanup:
             this.OnCleanupMessage(data)
@@ -98,13 +98,13 @@ export class Receiver {
         }
     }
 
-    OnCommandsMessage(data: ControllerMessageCommands) {
+    async OnCommandsMessage(data: ControllerMessageCommands) {
         const getResults: any[] = []
         for (const cmd of data.commands) {
-            this.RunCommand(cmd, getResults)
+            await this.RunCommand(cmd, getResults)
         }
 
-        this.Messenger!.postMessage({
+        this.messenger!.postMessage({
             type: ReceiverMessageType.Done,
             flushId: data.flushId,
             results: getResults
@@ -116,7 +116,7 @@ export class Receiver {
             this.idMap.delete(id);
     }
 
-    RunCommand(command: Command, getResults: Result[]) {
+    async RunCommand(command: Command, getResults: Result[]) {
         switch (command.type) {
             case CommandType.Call:
                 this.Call(command)
@@ -125,7 +125,7 @@ export class Receiver {
                 this.Set(command)
                 break
             case CommandType.Get:
-                this.Get(command, getResults)
+                await this.Get(command, getResults)
                 break
             case CommandType.Construct:
                 this.Construct(command)
@@ -185,13 +185,18 @@ export class Receiver {
         base[propertyName] = value
     }
 
-    Get(command: CommandGet, getResults: Result[]) {
+    async Get(command: CommandGet, getResults: Result[]) {
         const { type, objectId, path, getId } = command
-        const obj = this.IdToObject(objectId)
-        if(obj.then) {
-            console.log('promise')
-        }
+        let obj = this.IdToObject(objectId)
         if (path == undefined || path.length < 1) {
+            if(obj?.then) {
+                obj = await obj 
+             }
+             Object.keys(obj).forEach(key => {
+                if(obj[key][Controller.TargetSymbol]) {
+                    obj[key] = obj[key][Controller.TargetSymbol]
+                }
+            })
             getResults.push({
                 getId,
                 valueData: this.WrapArg(obj)
@@ -206,6 +211,7 @@ export class Receiver {
         for (let i = 0, len = path.length - 1; i < len; ++i) {
             base = base[path[i]]
         }
+
         let value
         if(base[propertyName]._raw) {
             value = base[propertyName]._raw

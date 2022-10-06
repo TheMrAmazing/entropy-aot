@@ -21,25 +21,29 @@
         },
         {
             "name": "Database",
-            "program": "${workspaceFolder}/entropy-db/index",
             "request": "launch",
             "skipFiles": [
                 "<node_internals>/**",
                 "node_modules/**"
             ],
             "type": "node",
+            "env": {
+                "TS_NODE_PROJECT": "tsconfig.json"
+            },
             "runtimeExecutable": "node",
             "runtimeArgs": [
                 "--loader",
                 "ts-node/esm",
-                "-r",
-                "tsconfig-paths/register"
+                "--experimental-specifier-resolution=node",
+            ],
+            "args":[
+                "${workspaceFolder}/entropy-db/index"
             ],
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
             "name": "Server",
-            "program": "${workspaceFolder}/entropy-server/index",
+            "program": "${workspaceFolder}/entropy-server/index.ts",
             "request": "launch",
             "skipFiles": [
                 "<node_internals>/**",

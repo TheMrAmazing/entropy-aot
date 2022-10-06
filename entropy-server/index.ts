@@ -27,13 +27,5 @@ async function start() {
         admin.verified = true
         db.users.push(admin)
     }
-    let dude = new User()
-    dude.email = 'luka@chthonicsoftware.com'
-    dude.password ='fun'
-    dude.image = 'https://i.redd.it/v0caqchbtn741.jpg'
-    dude.name = 'luka'
-    dude.globalRoles = []
-    dude.verified = true
-    db.users.push(dude)
 }
 start()
