@@ -32,7 +32,6 @@
             "runtimeArgs": [
                 "--loader",
                 "ts-node/esm",
-                "--experimental-specifier-resolution=node",
                 "-r",
                 "tsconfig-paths/register"
             ],

@@ -13,8 +13,6 @@
 		"noImplicitAny": false,
 		"composite": true,
 		"declaration": true,
-		"inlineSourceMap": true,
-		"sourceMap": true,
 		"strictNullChecks": false,
 		"noImplicitReturns": true,
 		"noUncheckedIndexedAccess": false,
@@ -23,10 +21,6 @@
 		"types": ["node", "dom"],
 		"outDir": "dist"
     },
-	"ts-node": {
-		"esm": true,
-		"experimentalSpecifierResolution": "node"
-	},
     "exclude": [
       "node_modules/**/*"
     ]
