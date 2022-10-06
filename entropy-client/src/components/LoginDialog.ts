@@ -1,6 +1,6 @@
 import {Component} from 'lib/Component'
 import RegisterDialog from './RegisterDialog'
-import state from '../js/globalState'
+import {state, api} from '../js/globalState'
 import { post } from '../js/utils'
 import {h} from 'lib/snabbdom'
 
@@ -14,9 +14,11 @@ export default class LoginDialog extends Component {
     async submit(e) {
         e.preventDefault()
         let vals = Object.entries(e.target)
-            // .filter(tar => tar[1].constructor.name == 'HTMLInputElement')
-            // .map(tar => tar[1].value)
-        state.user = await post('/api/login', { email: vals[0], password: vals[1]})
+            .filter(tar => tar[1].constructor.name == 'HTMLInputElement')
+            .map((tar: any) => tar[1].value)
+            //@ts-ignore
+        state.user = await api.login(vals[0], vals[1])
+        console.log(state.user)
         state.domain = state.user.domain
         loginDialog.close()
     }

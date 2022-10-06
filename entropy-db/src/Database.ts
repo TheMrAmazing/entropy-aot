@@ -1,13 +1,18 @@
 import { BaseEntity } from 'lib/praxis/database/BaseEntity'
+import { User, Domain } from '../../entropy-server/src/entities'
 
 //@ts-ignore
-class Database extends BaseEntity {
-    counter: number = 0
+export class Database extends BaseEntity {
+    declare public users: User[]
+    declare public domains: Domain[]
     constructor() {
         super()
-    }
-    add() {
-        return ++this.counter
+        if(this.users == undefined) {
+            this.users = []
+        }
+        if (this.domains == undefined) {
+            this.domains = []
+        }
     }
 }
 export const db = new Database()

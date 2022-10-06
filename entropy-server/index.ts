@@ -1,21 +1,39 @@
+import { User } from './src/entities/User'
+import { fnArg } from 'lib/praxis/remote/Controller'
 import { WSController } from 'lib/praxis/shims/WSController'
+import { Database } from '../entropy-db/src/Database'
+import { Receiver } from 'lib/praxis/remote/Receiver'
+import { WSReceiver } from 'lib/praxis/shims/BrowserReceiver'
+import {API} from './src/api'
 
+export let db: Database
+let ws = new WSController()
+
+const receiver = new Receiver(new API(), WSReceiver, 1337)
 
 async function start() {
-    let ws = new WSController()
-    setTimeout(async () => {
-        const db = ws.controller.Remote
-        //writing to the database is done by attaching any piece of data to the Remote object
-        db.test = {data: 'I am a new piece of data in the database'}
-        db.bellbell = {pugs: {gee: 'I am another string'}, thing: 'boo'}
-        //retrieving from the database is done by simply awaiting any piece of data on the Remote
-        let res = await db.bellbell
-        db.test = db.bellbell
-        db.bellbell.pugs.circ = db.bellbell
-        let res2 = await db.test.pugs.circ
-        console.log(res2)
-        // console.log(res2)
-    },3000)
+    await ws.connect('ws://localhost:3000/')
+    db = ws.controller.Remote
+    let email = 'david.bell@chthonicsoftware.com'
+    if(await db.users.find(fnArg({email}, val => val.email == email))) {
+        console.log('admin already created')
+    } else {
+        let admin = new User()
+        admin.email = 'david.bell@chthonicsoftware.com'
+        admin.password ='test'
+        admin.image = 'https://i.redd.it/v0caqchbtn741.jpg'
+        admin.name = 'test'
+        admin.globalRoles = []
+        admin.verified = true
+        db.users.push(admin)
+    }
+    let dude = new User()
+    dude.email = 'luka@chthonicsoftware.com'
+    dude.password ='fun'
+    dude.image = 'https://i.redd.it/v0caqchbtn741.jpg'
+    dude.name = 'luka'
+    dude.globalRoles = []
+    dude.verified = true
+    db.users.push(dude)
 }
-
-setTimeout(start, 3000)
+start()

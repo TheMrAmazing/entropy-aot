@@ -4,9 +4,8 @@ import { Controller } from "./Controller"
 export function refProxy(controller: Controller, objectId: ObjectID, path:PathType) {
     return {
         get:(target:any, key: string | symbol, receiver: any) => {
-            if(key == '_raw') {
+            if (key === controller.TargetSymbol)
                 return target
-            }
             if(key == 'then') {
                 if (target.$ref != undefined) {
                     return (resolve, reject) => {

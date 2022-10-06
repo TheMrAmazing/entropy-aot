@@ -1,4 +1,3 @@
-import { Blob } from 'buffer'
 import { Receiver } from './remote/Receiver'
 
 export type Primitive = undefined | null | boolean | number | string | Blob | ArrayBuffer
@@ -70,6 +69,7 @@ export enum ArgType {
     Object,
     Callback,
     ObjectProperty,
+    Function
 }
 
 export type Arg = {
@@ -85,6 +85,10 @@ export type Arg = {
     type: ArgType.ObjectProperty,
     value: ObjectID,
     path: PathType
+} | {
+    type: ArgType.Function
+    scope: Object
+    func: string
 }
 
 export type Command = CommandCall | CommandSet | CommandGet | CommandConstruct
@@ -137,6 +141,5 @@ export class RemoteProperty extends RemoteObject{
 
 export function CanStructuredClone(o: any) {
     const type = typeof o
-    return type === "undefined" || o === null || type === "boolean" || type === "number" || type === "string" ||
-            (o instanceof Blob) || (o instanceof ArrayBuffer) ||type === "object"
+    return type === "undefined" || o === null || type === "boolean" || type === "number" || type === "string" || (o instanceof ArrayBuffer) ||type === "object"
 }

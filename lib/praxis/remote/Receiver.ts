@@ -13,8 +13,6 @@ export class Receiver {
 
     IdToObject(id: ObjectID) {
         const ret = this.idMap.get(id)
-        if (typeof ret === "undefined")
-            throw new Error("missing object id: " + id)
         return ret
     }
 
@@ -28,6 +26,10 @@ export class Receiver {
         const ret = this.idMap.get(id);
         if (typeof ret === 'undefined')
             throw new Error("missing object id: " + id)
+
+        if (ret.then) {
+            console.log('is promise')
+        }
         
         let base = ret
         for (let i = 0, len = path.length; i < len; ++i)
@@ -59,6 +61,12 @@ export class Receiver {
         }))
     }
 
+    makeFunction(scope: Object, func: string) {
+        let keys = Object.keys(scope)
+        let values = Object.values(scope)
+        return new Function(...keys, 'return ' + func.toString())(...values)
+    }
+
     UnwrapArg(arg: Arg) {
         switch (arg.type)	{
         case ArgType.Primitive:
@@ -69,6 +77,8 @@ export class Receiver {
             return this.GetCallbackShim(arg.value)
         case ArgType.ObjectProperty:
             return this.IdToObjectProperty(arg.value, arg.path)
+        case ArgType.Function:
+            return this.makeFunction(arg.scope, arg.func)
         default:
             throw new Error("invalid arg type")
         }
@@ -137,7 +147,11 @@ export class Receiver {
             base = base[path[i]]
         }
         const ret = base[methodName](...args)
-        this.idMap.set(returnId, ret)
+        if (ret?._raw) {
+            this.idMap.set(returnId, ret._raw)
+        } else {
+            this.idMap.set(returnId, ret)
+        }
     }
 
     Construct(command: CommandConstruct) {
@@ -174,7 +188,9 @@ export class Receiver {
     Get(command: CommandGet, getResults: Result[]) {
         const { type, objectId, path, getId } = command
         const obj = this.IdToObject(objectId)
-
+        if(obj.then) {
+            console.log('promise')
+        }
         if (path == undefined || path.length < 1) {
             getResults.push({
                 getId,

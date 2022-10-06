@@ -1,6 +1,4 @@
-import { serialize, deserialize } from 'v8'
 import { Controller } from '../remote/Controller'
-import {WebSocket}from 'ws'
 
 export class WSController {
     wss: WebSocket
@@ -17,12 +15,11 @@ export class WSController {
                     this.controller = new Controller()
                     this.controller.Messenger = {
                         postMessage: (message: any) => {
-                            this.wss.send(serialize(message))
+                            this.wss.send(JSON.stringify(message))
                         }
                     }
                     this.wss.onmessage = (e) => {
-                        //@ts-ignore
-                        this.controller.OnMessage(deserialize(new Uint8Array(e.data)))
+                        this.controller.OnMessage(JSON.parse(e.data))
         
                     }
                     resolve(this.wss)

@@ -13,7 +13,7 @@ type Resolve = {
     objectId: ObjectID,
     path: PathType,
 }
-
+const functionSymbol = Symbol()
 export class Controller {
     commandQueue: Command[] = []
 
@@ -75,6 +75,15 @@ export class Controller {
                     value: propertyTarget._objectId,
                     path: propertyTarget._path
                 }
+			}
+			const isFunction = arg[functionSymbol]
+			if(isFunction) {
+				let vals = (arg as ReturnType<typeof fnArg>)()
+				return {
+					type: ArgType.Function,
+					func: vals.func,
+					scope: vals.scope
+				}
 			}
 			return {
                 type: ArgType.Callback,
@@ -144,9 +153,9 @@ export class Controller {
 			
 			this.pendingGetResolves.delete(getId)
             let val = this.UnwrapArg(valueData) as any
-			if(val.$ref != undefined) {
+			if(val?.$ref != undefined) {
 				val = new Proxy(val, refProxy(this, resolve.objectId,[...resolve.path] ))		
-			} else {
+			} else if (val != undefined) {
 				Reflect.ownKeys(val).forEach(key => {
 					if(val[key].$ref != undefined) {
 						val[key] = new Proxy(val[key], refProxy(this, resolve.objectId,[...resolve.path, key] ))
@@ -207,3 +216,11 @@ export class Controller {
 	}
 }
 
+export function fnArg(scope: Object, fn: Function) {
+	let ret = () => {return {
+			func: fn.toString(),
+			scope
+		}}
+	Object.defineProperty(ret, functionSymbol, {value: true, enumerable: false})
+	return ret
+}

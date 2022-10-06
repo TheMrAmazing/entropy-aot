@@ -24,7 +24,7 @@ export function BaseEntity() {
     this.ObjectSymbol = Symbol()
 
    const getRef = (ref: string) => {
-        let val = this.refs.get(ref)
+        let val = this.refs[ref]
         if (val) {
             return val
         } else {
@@ -39,9 +39,15 @@ export function BaseEntity() {
         }
     }
     let base = getRef('#')
-    let keys = Reflect.ownKeys(base).filter(key => !Reflect.ownKeys(this).includes(key))
-    keys.forEach(key => this[key] = base[key])
-    
+    let keys = Reflect.ownKeys(base).filter(key => {
+        let val = Reflect.ownKeys(this).includes(key)
+        return !val
+    })
+    keys.forEach(key => {
+        console.log(key)
+        // Object.defineProperty(this, key, {value: base[key], enumerable: true})
+        this[key] = base[key]
+    })
     
     const replacer = (path: string[], value: any) => {
         if(isObject(value) && !value.$ref) {

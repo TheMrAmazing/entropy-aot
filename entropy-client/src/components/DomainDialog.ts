@@ -1,5 +1,5 @@
 import { Component } from 'lib/Component'
-import state from '../js/globalState'
+import { state } from '../js/globalState'
 import { post } from '../js/utils'
 
 export default class DomainDialog extends Component {

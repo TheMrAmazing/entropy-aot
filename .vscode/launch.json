@@ -4,6 +4,10 @@
         {
             "name": "Debug Entropy",
             "configurations": ["Database", "Server", "Client"]
+        },
+        {
+            "name": "Debug Backend",
+            "configurations": ["Database", "Server"]
         }
     ],
     "configurations": [
