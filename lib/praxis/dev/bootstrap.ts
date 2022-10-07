@@ -8,7 +8,6 @@ import { join, normalize } from 'path'
 import { Server as WsServer } from 'socket.io'
 import { connect } from './sockets'
 import {  attachWebhook } from './cloudflare'
-import ts from 'typescript'
 
 export let tangleServer: TangleServer
 

@@ -15,7 +15,7 @@ export class Database extends BaseEntity {
         }
     }
     log() {
-        console.log('I am a new string')
+        console.log('This is so cool! 2')
     }
 }
 export const db = new Database()
