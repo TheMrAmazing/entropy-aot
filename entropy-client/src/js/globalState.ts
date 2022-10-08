@@ -6,6 +6,7 @@ let ws = new WSController()
 let api: API
 
 let state = {
+    sess: undefined as string | undefined,
     user: undefined as User | undefined,
     domain: undefined as Domain | undefined
 }

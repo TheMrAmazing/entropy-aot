@@ -2,6 +2,7 @@ import { Database } from '../../entropy-db/src/Database'
 import { User } from  './entities/User'
 import { db } from '..'
 import { fnArg } from 'lib/praxis/remote/Controller'
+import * as crypto from 'crypto'
 
 const idMap = new Map()
 const PASSWORD_SALT = 8
@@ -22,11 +23,12 @@ export class API {
     }
 
     async me(sess: string){
-        let user = await db.users.find(val => val.id == idMap.get(sess))
+        let id = idMap.get(sess)
+        let user = await db.users.find(fnArg({id}, val => val.id == id))
         if (user) {
             return user
         } else {
-            return 'Error: Not found'
+            return undefined
         }
     }
 
@@ -34,9 +36,12 @@ export class API {
         let user = await db.users.find(fnArg({email}, val => val.email == email.toLowerCase()))
         if(user?.verified) {
             if(user.password == password) {
-                return user
+                let sess = crypto.randomUUID()
+                idMap.set(sess, user.id)
+                return {sess,  user}
             }
         }
         return undefined
     }
 }
+export default new API()

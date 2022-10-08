@@ -16,11 +16,11 @@ export default defineConfig({
                 changeOrigin: true,
                 ws: true
             },
-            '/assets': {
-                target: 'http://localhost:1337',
-                changeOrigin: true,
-                ws: true
-            }
+            // '/assets': {
+            //     target: 'http://localhost:1337',
+            //     changeOrigin: true,
+            //     ws: true
+            // }
         }
     }
 })

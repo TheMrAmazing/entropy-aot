@@ -5,13 +5,18 @@ export class Receiver {
     messenger: Messenger = undefined
     idMap: Map<ObjectID, any>
     nextObjectId: ObjectID = -1
-    
-    constructor (remote: any, Shim: MessageShim, ...args: any[]) {
+    remoteFile: string
+
+    constructor (remoteFile: string, Shim: MessageShim, ...args: any[]) {
+        this.remoteFile = remoteFile
         new Shim(this, ...args)
-        this.idMap = new Map([[0, remote]])
+        this.idMap = new Map()
     }
 
     IdToObject(id: ObjectID) {
+        if(id == 0) {
+            return require(this.remoteFile).default
+        }
         const ret = this.idMap.get(id)
         return ret
     }
@@ -38,13 +43,43 @@ export class Receiver {
         return base
     }
 
-    WrapArg(arg: any): Arg {
+	async sanitize(obj) {
+		if (CanStructuredClone(obj)) {
+		   return true
+		}
+		if(obj?.then) {
+			obj = await obj 
+		}
+        if (CanStructuredClone(obj)) {
+            return true
+         }
+		await Promise.all(Object.keys(obj).map(async key => {
+			if(obj[key][Controller.TargetSymbol]) {
+				obj[key] = obj[key][Controller.TargetSymbol]
+				return true
+			} else {
+                let val = await this.sanitize(obj[key])
+				return val
+			}
+		}))
+		return false
+	}
+
+    async WrapArg(arg: any): Promise<Arg> {
         if (CanStructuredClone(arg)) {
             return {
                 type: ArgType.Primitive,
                 value: arg    
             }
         }
+		if(arg.getId) {
+            await this.sanitize(arg.obj)
+			return {
+				type: ArgType.Return,
+				value: arg.obj,
+				getId: arg.getId
+			}
+		}
         else {
             return {
                 type: ArgType.Object,
@@ -174,32 +209,25 @@ export class Receiver {
         const { type, objectId, path, argsData} = command
         const obj = this.IdToObject(objectId)
         const value = this.UnwrapArg(argsData)
-        const propertyName = path[path.length - 1]
-        
+        const propertyName = path[path.length - 1]    
         let base = obj
-        
         for (let i = 0, len = path.length - 1; i < len; ++i) {
             base = base[path[i]]
         }
-        
         base[propertyName] = value
     }
 
     async Get(command: CommandGet, getResults: Result[]) {
         const { type, objectId, path, getId } = command
         let obj = this.IdToObject(objectId)
+        if(obj.then) {
+            obj = await obj
+        }
         if (path == undefined || path.length < 1) {
-            if(obj?.then) {
-                obj = await obj 
-             }
-             Object.keys(obj).forEach(key => {
-                if(obj[key][Controller.TargetSymbol]) {
-                    obj[key] = obj[key][Controller.TargetSymbol]
-                }
-            })
+            let val = await this.WrapArg({getId, obj})
             getResults.push({
                 getId,
-                valueData: this.WrapArg(obj)
+                valueData: val
             })
             return
         }
@@ -212,15 +240,15 @@ export class Receiver {
             base = base[path[i]]
         }
 
-        let value
         if(base[propertyName]._raw) {
-            value = base[propertyName]._raw
+            obj = base[propertyName]._raw
         } else {
-            value = base[propertyName]
+            obj = base[propertyName]
         }
+        let val = await this.WrapArg({getId, obj})
         getResults.push({
             getId,
-            valueData: this.WrapArg(value)
+            valueData: val
         })
     }
 }

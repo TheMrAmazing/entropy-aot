@@ -8,24 +8,11 @@ import {router} from '../Router'
 export default class Header extends Component {
     loginDialog: LoginDialog
     domainDialog: DomainDialog
-    hidden: boolean
-    left: string
-    top: string
+
     constructor() {
         super()
         this.loginDialog = new LoginDialog()
         this.domainDialog = new DomainDialog()
-        this.hidden = true
-        this.left = ''
-        this.top = ''
-        document.addEventListener('click', (e) => {
-            if(avatarMenu) {
-                if(!this.hidden) {
-                    this.hidden = true
-                    this.patch()
-                }
-            }
-        })
     }
 
     async createDeveloper(e) {
@@ -65,24 +52,9 @@ export default class Header extends Component {
 █▄▄ █  █  █  █ ▀▄ ▀▄▄▀ █      █  `),
                     
                     state.user ? 
-                    div([
-                        img({attrs: {src: state.user.image}, on: {click: (e) => {
-                            e.stopPropagation()
-                            if(this.hidden) {
-                                let boundingRect = avatarMenu.getBoundingClientRect()
-                                let endingRight = e.clientX + boundingRect.width
-                                let endingBottom = e.clientY + boundingRect.height
-                                let overflowRight = endingRight - window.innerWidth
-                                let overflowBottom = endingBottom - window.innerHeight
-                                let nudgedClientX = overflowRight > 0 ? e.clientX - boundingRect.width : e.clientX
-                                let nudgedClientY = overflowBottom > 0 ? e.clientY - boundingRect.height : e.clientY
-                                this.left = `${8 * Math.floor(nudgedClientX / 8)}px`
-                                this.top = `${16 * Math.floor(nudgedClientY / 16)}px`
-                            }
-                            this.hidden = !this.hidden
-                            this.patch()
-                        }}}),
-                         menu('#avatarMenu', {class:{hidden: this.hidden}, style: {top: this.top, left: this.left}}, [
+                    div('.hover-menu', [
+                        img({attrs: {src: state.user.image}}),
+                        menu([
                             li({on: {click: e => router.push('')}}, 'Account Settings'),
                             state.domain?.channel ? li({on: {click: e => router.push('channel')}}, 'Channel Settings') :
                             li({on: {click: state.domain ? this.createChannel : this.domainDialog.open}}, 'Create Channel'),

@@ -4,12 +4,15 @@ import { WSController } from 'lib/praxis/shims/WSController'
 import { Database } from '../entropy-db/src/Database'
 import { Receiver } from 'lib/praxis/remote/Receiver'
 import { WSReceiver } from 'lib/praxis/shims/BrowserReceiver'
-import {API} from './src/api'
+import { hotReload } from 'lib/praxis/dev/reload'
+import path from 'path'
+
+hotReload(__dirname)
 
 export let db: Database
 let ws = new WSController()
 
-const receiver = new Receiver(new API(), WSReceiver, 1337)
+const receiver = new Receiver(path.resolve(__dirname, './src/api'), WSReceiver, 1337)
 
 async function start() {
     await ws.connect('ws://localhost:3000/')

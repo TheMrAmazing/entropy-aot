@@ -33,8 +33,8 @@ export class Bitmap {
 		// class constructor
 		this.optColors = []
 		this.optPixels = []
-		this.width = img.width;
-		this.height = img.height;
+		this.width = img.width
+		this.height = img.height
 		this.palette = new Palette(img.colors.map(color => {
 			return  new Color(color[0], color[1], color[2])
 		}), img.cycles.map(cycle =>{

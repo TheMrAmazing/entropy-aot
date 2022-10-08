@@ -16,11 +16,17 @@ export default class LoginDialog extends Component {
         let vals = Object.entries(e.target)
             .filter(tar => tar[1].constructor.name == 'HTMLInputElement')
             .map((tar: any) => tar[1].value)
-            //@ts-ignore
-        state.user = await api.login(vals[0], vals[1])
-        console.log(state.user)
-        state.domain = state.user.domain
-        loginDialog.close()
+
+        let ret = await api.login(vals[0], vals[1])
+        let sess = ret.sess
+        let user = ret.user
+        console.log(user)
+        if(user) {
+            state.user = user
+            state.domain = state.user.domain
+            state.sess = sess
+            loginDialog.close()
+        }
     }
 
     async open(e) {

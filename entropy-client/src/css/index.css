@@ -237,15 +237,29 @@ img {
     height: calc(var(--h) * 3);
 }
 
+.hover-menu:hover menu {
+    visibility: visible;
+}
+
+.hover-menu > menu {
+    visibility: hidden;
+}
+
 menu {
+    float: right;
     cursor: pointer;
     border: 1px solid var(--primary);
     background-color: var(--surface);
     color: var(--background);
     list-style: none;
     position: fixed;
-    visibility: visible;
     z-index: 101;
+    max-width: calc(var(--w) * 20);
+    right: 0;
+}
+
+menu:focus-within {
+    visibility: visible;
 }
 
 menu li {
@@ -321,4 +335,8 @@ aside li {
 .selected {
     color: var(--background);
     background-color: var(--primary);
+}
+
+terminal-input {
+    width:100%;
 }

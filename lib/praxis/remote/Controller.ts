@@ -95,9 +95,27 @@ export class Controller {
                 type: ArgType.Primitive,
                 value: arg as Primitive
             }
+		} else if (typeof arg == 'object') {
+			return {
+                type: ArgType.Primitive,
+                value: arg as Primitive
+            }
 		}
 		else
 			throw new Error("invalid argument")
+	}
+
+	MakeReturn(getId, val) {
+		const resolve = this.pendingGetResolves.get(getId) as Resolve
+		if(val?.$ref != undefined) {
+			val = new Proxy(val, refProxy(this, resolve.objectId,[...resolve.path] ))		
+		} else if (val != undefined) {
+			Reflect.ownKeys(val).forEach(key => {
+				if(val[key].$ref != undefined) {
+					val[key] = new Proxy(val[key], refProxy(this, resolve.objectId,[...resolve.path, key] ))
+				}
+			})
+		}
 	}
 	
 	UnwrapArg(arg: Arg) {
@@ -106,6 +124,8 @@ export class Controller {
 			return arg.value
 		case ArgType.Object:
 			return this.MakeObject(arg.value)
+		case ArgType.Return:
+			return this.MakeReturn(arg.getId, arg.value)
 		default:
 			throw new Error("invalid arg type");
 		}
@@ -151,17 +171,8 @@ export class Controller {
 			if (!resolve)
 				throw new Error("invalid get id")
 			
+			let val = this.UnwrapArg(valueData) as any
 			this.pendingGetResolves.delete(getId)
-            let val = this.UnwrapArg(valueData) as any
-			if(val?.$ref != undefined) {
-				val = new Proxy(val, refProxy(this, resolve.objectId,[...resolve.path] ))		
-			} else if (val != undefined) {
-				Reflect.ownKeys(val).forEach(key => {
-					if(val[key].$ref != undefined) {
-						val[key] = new Proxy(val[key], refProxy(this, resolve.objectId,[...resolve.path, key] ))
-					}
-				})
-			}
 			resolve.func(val)
 		}
 		

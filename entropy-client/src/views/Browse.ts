@@ -17,8 +17,9 @@ export default class Browse extends Component {
         requestAnimationFrame(async () => {
             let num = (Date.now() % 35) + 1
             let paddedNum = zeroPad(num, 3)
-            let url = '/assets/image_'  + paddedNum + '.json'
-            this.image = await get(url)
+            let data = await import('../assets/backgrounds/image_'  + paddedNum + '.json')
+            // let url = '/assets/background/image_'  + paddedNum + '.json'
+            this.image = data
             this.show = true
             show(bmap, this.image)
         })
