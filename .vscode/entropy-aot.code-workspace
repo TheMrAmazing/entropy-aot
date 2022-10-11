@@ -15,6 +15,11 @@
 		"inlineFold.unfoldedOpacity": 1,
 		"debug.inlineValues": "on",
 		"notebook.showFoldingControls": "mouseover",
-		"editor.showFoldingControls": "mouseover"
+		"editor.showFoldingControls": "mouseover",
+		"eslint.quiet": true,
+		"editor.codeActionsOnSave": {
+			"source.fixAll.eslint": true
+		},
+		"eslint.validate": ["javascript"]
 	}
 }

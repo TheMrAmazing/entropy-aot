@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "scripts": {
     "start": "node ./dist/index.js",
     "debug": "ts-node ./entropy-db/index",
@@ -6,15 +7,12 @@
     "serve:client": "npx vite"
   },
   "dependencies": {
-    "typescript": "^4.8.4",
     "ws": "^8.9.0"
   },
   "devDependencies": {
     "@types/node": "^18.8.2",
     "@types/ws": "^8.5.3",
-    "ts-node": "^10.9.1",
-    "tsconfig-paths": "^4.1.0",
-    "ttypescript": "^1.5.13",
+    "eslint": "^8.25.0",
     "vite": "^3.1.0"
   }
 }
