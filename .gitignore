@@ -168,3 +168,4 @@ dist
 .yarn/install-state.gz
 .pnp.\*
 entropy-db/json/*
+package-lock.json
