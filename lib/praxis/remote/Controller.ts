@@ -116,6 +116,7 @@ export class Controller {
 				}
 			})
 		}
+		return val
 	}
 	
 	UnwrapArg(arg: Arg) {

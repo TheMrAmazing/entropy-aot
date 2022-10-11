@@ -10,4 +10,7 @@ export class Room extends EntropyEntity {
     writeScopes: string[]
     deleteScopes: string[]
     widget: Widget
+    constructor() {
+        super()
+    }
 }

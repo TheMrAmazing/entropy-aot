@@ -19,3 +19,4 @@ export class Database extends BaseEntity {
     }
 }
 export default new Database()
+export const db = {log: () => console.log('test')}

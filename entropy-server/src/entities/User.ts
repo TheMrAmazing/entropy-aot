@@ -17,6 +17,10 @@ export class User extends EntropyEntity {
     domainId?: string
     messages?: Message[]
 
+    constructor() {
+        super()
+    }
+
     // static async emailIsAvailable(email: string): Promise<boolean> {
     //     let exists = await this.findOne({
     //         where: {

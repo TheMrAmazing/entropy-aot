@@ -8,4 +8,8 @@ export class Message extends EntropyEntity {
     userId: string
     roomId: string
     data: Object
+
+    constructor() {
+        super()
+    }
 }

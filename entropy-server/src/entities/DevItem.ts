@@ -19,6 +19,9 @@ export class DevItem extends EntropyEntity {
     storeItemId?: string
     config?: Object
 
+    constructor() {
+        super()
+    }
     // async setlocation(file: string) {
     //     try{
     //         let filePath = '/temp.zip'

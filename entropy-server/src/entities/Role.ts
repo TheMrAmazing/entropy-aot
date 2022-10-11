@@ -7,6 +7,10 @@ export class Role extends EntropyEntity {
     name: string
     graphic?: string
 
+    constructor() {
+        super()
+    }
+
     // static evaluatePermissions(roles: Role[], scopes: string[]): boolean {
     //     let allowed = this.scopesList(roles)
     //     return scopes.every(value => allowed.has(value))

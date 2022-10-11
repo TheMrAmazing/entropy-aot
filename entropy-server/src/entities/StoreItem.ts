@@ -12,4 +12,8 @@ export class StoreItem extends EntropyEntity {
     developerId: string
     devItem: DevItem
     widgets: Widget[]
+
+    constructor() {
+        super()
+    }
 }

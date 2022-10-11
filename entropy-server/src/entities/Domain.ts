@@ -17,6 +17,10 @@ export class Domain extends EntropyEntity {
     roles: Owns<DomainRole[]>
     user: User
 
+    constructor() {
+        super()
+    }
+
     // static async default(options: Domain): Promise<Domain> {
     //     let domain = options
     //     let roles = await Promise.all([

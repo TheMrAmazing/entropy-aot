@@ -1,7 +1,8 @@
 import { CommandType, ObjectID, PathType } from "../types"
 import { Controller } from "./Controller"
 
-export function refProxy(controller: Controller, objectId: ObjectID, path:PathType) {
+/**@param {Controller} controller @param {ObjectID} objectId @param {PathType} path*/
+export function refProxy(controller, objectId, path) {
     return {
         get:(target:any, key: string | symbol, receiver: any) => {
             if (key === Controller.TargetSymbol)

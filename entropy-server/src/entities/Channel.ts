@@ -9,4 +9,7 @@ export class Channel extends EntropyEntity {
     templateLayouts?: Object[]
     widgets: Owns<Widget[]>
     domain?: Domain
+    constructor() {
+        super()
+    }
 }

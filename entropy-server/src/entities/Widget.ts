@@ -11,4 +11,8 @@ export class Widget extends EntropyEntity {
     rooms: Owns<Room[]>
     channel: Channel
     channelId: string
+
+    constructor() {
+        super()
+    }
 }

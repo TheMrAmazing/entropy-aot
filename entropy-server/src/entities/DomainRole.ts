@@ -10,4 +10,7 @@ export class DomainRole extends Role {
     userIds?: string[]
     canAssign: DomainRole[]
     domainRoleIds?: string[]
+    constructor() {
+        super()
+    }
 }

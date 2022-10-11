@@ -16,6 +16,9 @@ export class Developer extends EntropyEntity {
     devItems: Owns<DevItem[]>
     storeItems: StoreItem[]
 
+    constructor() {
+        super()
+    }
     // static createAndSave(options: CreateDeveloperOptions): Promise<Developer> {
     //     let dev = new Developer()
     //     dev.apiKey = options.apiKey

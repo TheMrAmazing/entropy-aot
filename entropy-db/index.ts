@@ -2,7 +2,7 @@ import { Receiver } from 'lib/praxis/remote/Receiver'
 import { WSReceiver } from 'lib/praxis/shims/WSReceiver'
 import {hotReload} from 'lib/praxis/dev/reload'
 import path from 'path'
-// import './src/transformerTest'
+import './src/transformerTest'
 
 hotReload(__dirname)
 hotReload('C:\\work\\entropy-aot\\lib')

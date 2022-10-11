@@ -1,3 +1,4 @@
+import { ObjectFlags } from 'typescript'
 import {PathType, MessageShim, Messenger, Primitive, ObjectID, CanStructuredClone, Result, CallbackID, Command, GetID, FlushID, ControllerMessage, Arg, ArgType, ControllerMessageType, ReceiverMessage, ReceiverMessageType, ReceiverMessageDone, ReceiverMessageCallback, CommandType, ControllerMessageCommands, ControllerMessageCleanup, CommandCall, CommandConstruct, CommandSet, CommandGet} from '../types'
 import {Controller} from './Controller'
 export class Receiver {
@@ -53,7 +54,7 @@ export class Receiver {
         if (CanStructuredClone(obj)) {
             return true
          }
-		await Promise.all(Object.keys(obj).map(async key => {
+		let success = await Promise.all(Object.keys(obj).map(async key => {
 			if(obj[key][Controller.TargetSymbol]) {
 				obj[key] = obj[key][Controller.TargetSymbol]
 				return true
@@ -62,7 +63,11 @@ export class Receiver {
 				return val
 			}
 		}))
-		return false
+        if(success.includes(false)) {
+            return false
+        } else {
+            return true
+        }
 	}
 
     async WrapArg(arg: any): Promise<Arg> {
@@ -220,8 +225,8 @@ export class Receiver {
     async Get(command: CommandGet, getResults: Result[]) {
         const { type, objectId, path, getId } = command
         let obj = this.IdToObject(objectId)
-        if(obj.then) {
-            obj = await obj
+        if(obj?.then) {
+            obj = await obj 
         }
         if (path == undefined || path.length < 1) {
             let val = await this.WrapArg({getId, obj})

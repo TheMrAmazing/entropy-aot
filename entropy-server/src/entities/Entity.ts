@@ -5,6 +5,9 @@ export class EntropyEntity {
     id: UUID = crypto.randomUUID()
     createdAt: CreateDate = new Date()
     updatedAt: UpdateDate = new Date()
+    constructor() {
+        
+    }
 
     // static async initialize<T extends EntropyEntity>(this: (new () => T) & typeof EntropyEntity, entityLike: DeepPartial<T>): Promise<T> {
     //     let tree = getInheritanceTree(this)
