@@ -14,13 +14,14 @@
         {
             "name": "Client",
             "request": "launch",
-            "preLaunchTask": "start-client",
-            "type": "chrome",
+            "type": "msedge",
             "url": "http://localhost:8080",
-            "webRoot": "${workspaceFolder}/entropy-client"
+            "webRoot": "${workspaceFolder}/src"
         },
         {
             "name": "Database",
+            "program": "${workspaceFolder}/src/bootstrap.js",
+            "args": ["--main", "${workspaceFolder}/src/db.js"],
             "request": "launch",
             "skipFiles": [
                 "<node_internals>/**",
@@ -30,16 +31,13 @@
             "runtimeExecutable": "node",
             "runtimeArgs": [
                 "--inspect",
-                "--experimental-specifier-resolution=node"
-            ],
-            "args":[
-                "${workspaceFolder}/entropy-db/index"
+                "--enable-source-maps"
             ],
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
             "name": "Server",
-            "program": "${workspaceFolder}/entropy-server/index",
+            "program": "${workspaceFolder}/src/server.js",
             "request": "launch",
             "skipFiles": [
                 "<node_internals>/**",
@@ -49,7 +47,7 @@
             "runtimeExecutable": "node",
             "runtimeArgs": [
                 "--inspect",
-                "--experimental-specifier-resolution=node"
+                "--enable-source-maps"
             ],
             "internalConsoleOptions": "openOnSessionStart"
         }
