@@ -1,5 +1,6 @@
 import { patch } from '../../lib/snabbdom/patch.js'
-globalThis.componentRegistry = []
+
+/**@type {Map<string, Component>}*/ globalThis.componentRegistry = new Map()
 export class Component {
 	sel
 	data
@@ -31,7 +32,8 @@ export class Component {
 		throw Error('abstract method')
 	}
 	constructor() {
-		globalThis.componentRegistry.push(this)
+		let key = Object.getPrototypeOf(this).constructor.name
+		globalThis.componentRegistry.set(key, this)
 	}
 	patch() {
 		let newRender = this.render(this.slots)

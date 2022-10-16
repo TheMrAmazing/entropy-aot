@@ -15,6 +15,7 @@
             "name": "Client",
             "request": "launch",
             "type": "msedge",
+            "runtimeArgs": ["--auto-open-devtools-for-tabs"],
             "url": "http://localhost:8080",
             "webRoot": "${workspaceFolder}/src"
         },
@@ -37,7 +38,8 @@
         },
         {
             "name": "Server",
-            "program": "${workspaceFolder}/src/server.js",
+            "program": "${workspaceFolder}/src/bootstrap.js",
+            "args": ["--main", "${workspaceFolder}/src/server.js"],
             "request": "launch",
             "skipFiles": [
                 "<node_internals>/**",

@@ -1,5 +1,6 @@
-import { CanStructuredClone, ArgType, ControllerMessageType, ReceiverMessageType, CommandType } from './types.js'
-import { objectProxy } from './ObjectProxy.js'
+import { CanStructuredClone } from './types.js'
+
+/**@typedef {import('./types').Command} Command*/import { objectProxy } from './ObjectProxy.js'
 import { propertyProxy } from './PropertyProxy.js'
 import { refProxy } from './RefProxy.js'
 const functionSymbol = Symbol()
@@ -42,14 +43,14 @@ export class Controller {
 			const objectId = arg[Controller.ObjectSymbol]
 			if (typeof objectId === 'number') {
 				return {
-					type: ArgType.Object,
+					type: 1, //Object
 					value: objectId
 				}
 			}
 			const propertyTarget = arg[Controller.TargetSymbol]
 			if (propertyTarget) {
 				return {
-					type: ArgType.ObjectProperty,
+					type: 3, //ObjectProperty
 					value: propertyTarget._objectId,
 					path: propertyTarget._path
 				}
@@ -58,25 +59,25 @@ export class Controller {
 			if (isFunction) {
 				let vals = arg()
 				return {
-					type: ArgType.Function,
+					type: 4, //Function
 					func: vals.func,
 					scope: vals.scope
 				}
 			}
 			return {
-				type: ArgType.Callback,
+				type: 2, //Callback
 				value: this.GetCallbackId(arg)
 			}
 		}
 		else if (CanStructuredClone(arg)) {
 			return {
-				type: ArgType.Primitive,
+				type: 0, //Primitive
 				value: arg
 			}
 		}
 		else if (typeof arg == 'object') {
 			return {
-				type: ArgType.Primitive,
+				type: 0, //Primitive
 				value: arg
 			}
 		}
@@ -99,11 +100,11 @@ export class Controller {
 	}
 	UnwrapArg(arg) {
 		switch (arg.type) {
-		case ArgType.Primitive:
+		case 0: //Primitive
 			return arg.value
-		case ArgType.Object:
+		case 1: //Object
 			return this.MakeObject(arg.value)
-		case ArgType.Return:
+		case 5: //Return
 			return this.MakeReturn(arg.getId, arg.value)
 		default:
 			throw new Error('invalid arg type')
@@ -115,7 +116,7 @@ export class Controller {
 			return Promise.resolve()
 		const flushId = this.nextFlushId++
 		this.messenger.postMessage({
-			type: ControllerMessageType.Commands,
+			type: 1,
 			commands: this.commandQueue,
 			flushId: flushId
 		})
@@ -126,10 +127,10 @@ export class Controller {
 	}
 	OnMessage(data) {
 		switch (data.type) {
-		case ReceiverMessageType.Done:
+		case 0:
 			this.OnDone(data)
 			break
-		case ReceiverMessageType.Callback:
+		case 1:
 			this.OnCallback(data)
 			break
 		default:
@@ -177,7 +178,7 @@ export class Controller {
 	AddGet(objectId, path) {
 		const getId = this.nextGetId++
 		this.AddToQueue({
-			type: CommandType.Get,
+			type: 2,
 			objectId: objectId,
 			path: path,
 			getId: getId

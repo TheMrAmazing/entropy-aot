@@ -1,9 +1,11 @@
-import { db } from './server'
-import { fnArg } from './remote/Controller'
-import { hash } from './database/utils'
+import { ws } from './server.js'
+import { fnArg } from './remote/Controller.js'
+import { hash } from './database/utils.js'
 import * as crypto from 'crypto'
-import { User } from './entities'
+import { User } from './entities/User'
 const idMap = new Map()
+const db = ws.controller.Remote
+import {FileUpdate} from './dev/reload'
 export function getRoles(user, domain) {
 	let roles = []
 	if (domain.roles) {
@@ -74,13 +76,17 @@ export class API {
 			if (user.password == hash(password)) {
 				let sess = crypto.randomUUID()
 				idMap.set(sess, user.id)
+				// user.image = 'https://media.tenor.com/NICoVNbKVGYAAAAM/profile-picture.gif'
 				return { sess, user }
 			}
 		}
 		return undefined
 	}
 	fileChangeEvent(cb) {
-		fileUpdated.addEventListener('fileUpdate', cb)
+		fileUpdated.addEventListener('fileUpdate', (/**@type {FileUpdate}*/ e) => {
+			cb(e.filename)
+		})
 	}
 }
-export default new API()
+let api = new API()
+export default api

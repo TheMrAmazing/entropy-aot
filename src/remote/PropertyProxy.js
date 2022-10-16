@@ -1,4 +1,3 @@
-import { CommandType } from './types.js'
 import { Controller } from './Controller.js'
 export function propertyProxy(controller) {
 	let ret = {
@@ -25,7 +24,7 @@ export function propertyProxy(controller) {
 			}
 			if (value)
 				controller.AddToQueue({
-					type: CommandType.Set,
+					type: 1,
 					objectId: target._objectId,
 					path: nextPath,
 					argsData: controller.WrapArg(value)
@@ -38,7 +37,7 @@ export function propertyProxy(controller) {
 					target._path.pop()
 					const getId = Math.random() * Number.MAX_SAFE_INTEGER
 					controller.AddToQueue({
-						type: CommandType.Get,
+						type: 2,
 						objectId: target._objectId,
 						path: target._path,
 						getId: getId
@@ -49,7 +48,7 @@ export function propertyProxy(controller) {
 			}
 			const returnObjectId = Math.random() * Number.MAX_SAFE_INTEGER
 			controller.AddToQueue({
-				type: CommandType.Call,
+				type: 0,
 				objectId: target._objectId,
 				path: target._path,
 				argsData: argumentsList.map(arg => controller.WrapArg(arg)),
@@ -60,7 +59,7 @@ export function propertyProxy(controller) {
 		construct: (target, argumentsList, newTarget) => {
 			const returnObjectId = Math.random() * Number.MAX_SAFE_INTEGER
 			controller.AddToQueue({
-				type: CommandType.Construct,
+				type: 3,
 				objectId: target._objectId,
 				path: target._path,
 				argsData: argumentsList.map(arg => controller.WrapArg(arg)),

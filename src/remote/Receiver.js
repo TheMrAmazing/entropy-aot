@@ -1,4 +1,4 @@
-import { CanStructuredClone, ArgType, ControllerMessageType, ReceiverMessageType, CommandType } from './types.js'
+import { CanStructuredClone } from './types.js'
 import { Controller } from './Controller.js'
 import Module, { createRequire } from 'module'
 
@@ -7,7 +7,7 @@ function makeSync(/**@type {Promise<any>}*/ promise) {
 }
 
 export class Receiver {
-	messenger = undefined
+	messenger
 	idMap
 	nextObjectId = -1
 	remoteFile
@@ -17,14 +17,9 @@ export class Receiver {
 		this.idMap = new Map()
 	}
 	IdToObject(id) {
-		if (id == 0) {
-			let test2 = Module
-			const require = createRequire(import.meta.url)
-			console.log(test2)
-			//@ts-ignore
-			
-			let test = import(this.remoteFile)
-			console.log(test)
+		if (id == 0) {	
+			let test = require('../database/Database.js')
+			return require(this.remoteFile).default
 		}
 		const ret = this.idMap.get(id)
 		return ret
@@ -76,31 +71,33 @@ export class Receiver {
 	async WrapArg(arg) {
 		if (CanStructuredClone(arg)) {
 			return {
-				type: ArgType.Primitive,
+				type: 0, //Primitive
 				value: arg
 			}
 		}
 		if (arg.getId) {
 			await this.sanitize(arg.obj)
 			return {
-				type: ArgType.Return,
+				type: 5, //Return
 				value: arg.obj,
 				getId: arg.getId
 			}
 		}
 		else {
 			return {
-				type: ArgType.Object,
+				type: 1, //Object
 				value: this.ObjectToId(arg)
 			}
 		}
 	}
 	GetCallbackShim(id) {
-		return ((...args) => this.messenger.postMessage({
-			type: ReceiverMessageType.Callback,
+		return async (...args) => {
+			let wrappedArgs = await Promise.all(args.map(async arg => await this.WrapArg(arg)))
+			this.messenger.postMessage({
+			type: 1, //ReceiverMessageCallback
 			id: id,
-			args: args.map(arg => this.WrapArg(arg))
-		}))
+			args: wrappedArgs
+		})}
 	}
 	makeFunction(scope, func) {
 		let keys = Object.keys(scope)
@@ -109,15 +106,15 @@ export class Receiver {
 	}
 	UnwrapArg(arg) {
 		switch (arg.type) {
-		case ArgType.Primitive:
+		case 0: //Primitive
 			return arg.value
-		case ArgType.Object:
+		case 1: //Object
 			return this.IdToObject(arg.value)
-		case ArgType.Callback:
+		case 2: //Callback
 			return this.GetCallbackShim(arg.value)
-		case ArgType.ObjectProperty:
+		case 3: //ObjectPropert
 			return this.IdToObjectProperty(arg.value, arg.path)
-		case ArgType.Function:
+		case 4: //Function
 			return this.makeFunction(arg.scope, arg.func)
 		default:
 			throw new Error('invalid arg type')
@@ -125,10 +122,10 @@ export class Receiver {
 	}
 	async OnMessage(data) {
 		switch (data.type) {
-		case ControllerMessageType.Commands:
+		case 1: //ControllerMessageCommands
 			await this.OnCommandsMessage(data)
 			break
-		case ControllerMessageType.Cleanup:
+		case 0: //ControllerMessageCleanup
 			this.OnCleanupMessage(data)
 			break
 		default:
@@ -142,7 +139,7 @@ export class Receiver {
 			await this.RunCommand(cmd, getResults)
 		}
 		this.messenger.postMessage({
-			type: ReceiverMessageType.Done,
+			type: 0, //Done
 			flushId: data.flushId,
 			results: getResults
 		})
@@ -153,16 +150,16 @@ export class Receiver {
 	}
 	async RunCommand(command, getResults) {
 		switch (command.type) {
-		case CommandType.Call:
+		case 0: //Call
 			this.Call(command)
 			break
-		case CommandType.Set:
+		case 1: //Set
 			this.Set(command)
 			break
-		case CommandType.Get:
+		case 2: //Get
 			await this.Get(command, getResults)
 			break
-		case CommandType.Construct:
+		case 3: //Construct
 			this.Construct(command)
 			break
 		default:

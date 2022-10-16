@@ -1,14 +1,18 @@
 {
     "compilerOptions": {
 		"lib": [
-			"DOM"
+			"DOM",
+			"ESNext"
 		],
+		"module": "ESNext",
 		"checkJs": true,
 		"esModuleInterop": true,
 		"alwaysStrict": true,
+		"sourceMap": true,
+		"target": "ESNext",
 		"allowUnreachableCode": false,
 		"noImplicitAny": false,
-		"strictNullChecks": true,
+		"strictNullChecks": false,
 		"noImplicitReturns": true,
 		"noUncheckedIndexedAccess": false,
 		"noUnusedLocals": false, 
@@ -18,5 +22,8 @@
     },
     "exclude": [
       "node_modules/**/*"
-    ]
+    ],
+	"include": [
+		"./src/**/*"
+	]
 }

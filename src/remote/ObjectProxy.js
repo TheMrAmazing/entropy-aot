@@ -1,4 +1,3 @@
-import { CommandType } from './types.js'
 import { Controller } from './Controller.js'
 export function objectProxy(controller) {
 	let ret = {
@@ -9,7 +8,7 @@ export function objectProxy(controller) {
 		},
 		set: (target, property, value, receiver) => {
 			controller.AddToQueue({
-				type: CommandType.Set,
+				type: 1,
 				objectId: target._objectId,
 				path: [property],
 				argsData: controller.WrapArg(value)

@@ -1,6 +1,7 @@
 import { BaseEntity } from './BaseEntity.js'
 //@ts-ignore
 export class Database extends BaseEntity {
+	
 	constructor() {
 		super(process.cwd() + '/json/')
 		if (this.users == undefined) {
@@ -10,8 +11,6 @@ export class Database extends BaseEntity {
 			this.domains = []
 		}
 	}
-	log() {
-		console.log('This is so cool! 2')
-	}
 }
-export default new Database()
+let db = new Database()
+export default db

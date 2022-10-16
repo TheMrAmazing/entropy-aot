@@ -3,21 +3,17 @@ import { fnArg } from './remote/Controller.js'
 import { WSController } from './remote/shims/WSController.js'
 import { Receiver } from './remote/Receiver.js'
 import { WSReceiver } from './remote//shims/BrowserReceiver.js'
-// import { hotReload } from 'lib/praxis/dev/reload'
-import path from 'path'
-import { fileURLToPath } from 'url'
+import { hotReload } from './dev/reload'
 import { hash } from './database/utils.js'
 import { startFileServer } from './static/static.js'
-// hotReload(__dirname)
-// hotReload('C:\\work\\entropy-aot\\lib')
-import { createRequire } from 'module'
-globalThis.require = createRequire(process.cwd())
-export let db
-let ws = new WSController()
+
+hotReload(__dirname)
+
+export let ws = new WSController()
 const receiver = new Receiver('../api.js', WSReceiver, 1337)
 async function start() {
 	await ws.connect('ws://localhost:3000/')
-	db = ws.controller.Remote
+	let db = ws.controller.Remote
 	let email = 'david.bell@chthonicsoftware.com'
 	let user = await db.users.find(fnArg({ email }, val => val.email == email))
 	if (user) {

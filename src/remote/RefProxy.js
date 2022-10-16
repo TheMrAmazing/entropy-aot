@@ -1,6 +1,6 @@
-import { CommandType } from './types.js'
+/**@typedef {import('./types').Command} Command*/
 import { Controller } from './Controller.js'
-/**@param {Controller} controller @param {ObjectID} objectId @param {PathType} path*/
+/**@param {Controller} controller @param {number} objectId @param {string[]} path*/
 export function refProxy(controller, objectId, path) {
 	return {
 		get: (target, key, receiver) => {
@@ -11,7 +11,7 @@ export function refProxy(controller, objectId, path) {
 					return (resolve, reject) => {
 						const getId = Math.random() * Number.MAX_SAFE_INTEGER
 						controller.AddToQueue({
-							type: CommandType.Get,
+							type: 2,
 							objectId: objectId,
 							path: path,
 							getId: getId

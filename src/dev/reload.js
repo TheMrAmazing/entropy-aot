@@ -18,12 +18,12 @@ function setWatcher(/**@type {string}*/ file) {
 			watchedFiles.push(file)
 			debounce.set(file, true)
 			watch(file, {}, (eventType, filename) => {
-				// Object.keys(require.cache).forEach(function (id) {
-				// 	if (id == file) {
-				// 		console.log('Reloading: ' + filename)
-				// 		delete require.cache[id]
-				// 	}
-				// })
+				Object.keys(require.cache).forEach(function (id) {
+					if (id == file) {
+						console.log('Reloading: ' + filename)
+						delete require.cache[id]
+					}
+				})
 				if(debounce.get(file)) {
 					fileUpdated.dispatchEvent(new FileUpdate(file))
 					debounce.set(file, false)

@@ -3,9 +3,10 @@ const babel = require('@babel/parser')
 const traverse = require('@babel/traverse').default
 const t = require('@babel/types')
 const generate = require('@babel/generator').default
+const Module = require('module')
 
-function transform(source) {
-	let ast = babel.parse(source, {sourceType: 'module'})
+function transform(/**@type {string}*/ source, /**@type {string}*/ filename) {
+	let ast = babel.parse(source, {sourceType: 'module', sourceFilename: filename.slice(filename.lastIndexOf('\\') + 1)})
 	/**@type {Map<string, {path: string, type: "ImportSpecifier" | "ImportDefaultSpecifier" | "ImportNamespaceSpecifier", imported: string}>}*/ const imports = new Map()
 	traverse(ast, {
 		enter(path) {
@@ -21,6 +22,73 @@ function transform(source) {
 				//@ts-ignore
 				path.parent.body.unshift(t.callExpression(t.identifier('require'), [t.stringLiteral(path.node.source.value)]))
 				path.remove()
+			}
+			if (path.isExportNamedDeclaration()) {
+				//@ts-ignore
+				if(path.node.declaration.type == 'VariableDeclaration') {
+					//@ts-ignore
+					path.node.declaration.declarations.forEach(dec => {
+						path.insertAfter(
+							t.expressionStatement(
+								t.assignmentExpression('=', 
+									t.memberExpression(
+										t.identifier('exports'),	
+										t.identifier(dec.id.name)
+									),
+									t.identifier(dec.id.name)
+								)
+							)
+						)
+					})
+				} else {
+					path.insertAfter(
+						t.expressionStatement(
+							t.assignmentExpression('=', 
+								t.memberExpression(
+									t.identifier('exports'),
+									//@ts-ignore	
+									t.identifier(path.node.declaration.id.name)
+								),
+								//@ts-ignore
+								t.identifier(path.node.declaration.id.name)
+							)
+						)
+					)
+				}
+				//@ts-ignore
+				path.replaceWith(path.node.declaration)
+			}
+			if (path.isExportDefaultDeclaration()) {
+				if(path.node.declaration.type == 'ClassDeclaration' || path.node.declaration.type == 'FunctionDeclaration') {
+					path.insertAfter(
+						t.expressionStatement(
+							t.assignmentExpression('=', 
+								t.memberExpression(
+									t.identifier('exports'),
+									//@ts-ignore	
+									t.identifier('default')
+								),
+								//@ts-ignore
+								t.identifier(path.node.declaration.id.name)
+							)
+						)
+					)
+					path.replaceWith(path.node.declaration)
+				} else {
+					path.replaceWith(
+						t.expressionStatement(
+							t.assignmentExpression('=', 
+								t.memberExpression(
+									t.identifier('exports'),
+									//@ts-ignore	
+									t.identifier('default')
+								),
+								//@ts-ignore
+								path.node.declaration
+							)
+						)
+					)
+				}
 			}
 			if (path.isIdentifier()) {
 				let ref = imports.get(path.node.name)
@@ -61,24 +129,23 @@ function transform(source) {
 			}
 		}
 	})
-	return generate(ast)
+	return generate(ast, {sourceMaps: true, sourceFileName: filename.slice(filename.lastIndexOf('\\') + 1)}, source)
 }
 let code = fs.readFileSync(process.cwd() + '\\src\\test\\transformerTest.js').toString('utf8')
-let testTransform = transform(code)
-
+let testTransform = transform(code, process.cwd() + '\\src\\test\\transformerTest.js')
+const dir = process.cwd()[0].toUpperCase() + process.cwd().slice(1) + '\\src\\'
 const oldHook = require.extensions['.js']
 require.extensions['.js'] = (module, /**@type {string}*/ file) => {
-	if(!file.startsWith(process.cwd + '\\src\\')) {
-		module._compile(module, file)
-	} else {
+	if(file.startsWith(dir)) {
 		const oldCompile = module._compile
-		module._compile = (/**@type {string}*/ oldCode, /**@type {string}*/ file) => {
-			const {code, map} = transform(oldCode)
-			console.log(file)
-			module.SourceMap = map
+		module._compile = (/**@type {string}*/ oldCode, /**@type {string}*/ filename) => {
+			const {code, map} = transform(oldCode, filename)
+			let sourceMap = '\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,' + Buffer.from(JSON.stringify(map), 'utf8').toString('base64')
 			module._compile = oldCompile
-			module._compile(code, file)
+			module._compile(code + sourceMap, filename)
 		}
+		oldHook(module, file)
+	} else {
 		oldHook(module, file)
 	}
 }
