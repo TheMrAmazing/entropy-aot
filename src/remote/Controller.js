@@ -10,9 +10,6 @@ export class Controller {
 	finalizeIntervalMs = 10
 	finalizeIdQueue
 	finalizeTimerId
-	nextGetId = 0
-	nextFlushId = 0
-	nextCallbackId = 0
 	callbackToId = new Map()
 	idToCallback = new Map()
 	pendingGetResolves = new Map()
@@ -32,7 +29,7 @@ export class Controller {
 	GetCallbackId(func) {
 		let id = this.callbackToId.get(func)
 		if (typeof id === 'undefined') {
-			id = this.nextCallbackId++
+			id = Math.random() * Number.MAX_SAFE_INTEGER
 			this.callbackToId.set(func, id)
 			this.idToCallback.set(id, func)
 		}
@@ -114,7 +111,7 @@ export class Controller {
 		this.isPendingFlush = false
 		if (!this.commandQueue.length)
 			return Promise.resolve()
-		const flushId = this.nextFlushId++
+		const flushId = Math.random() * Number.MAX_SAFE_INTEGER
 		this.messenger.postMessage({
 			type: 1,
 			commands: this.commandQueue,
@@ -148,7 +145,7 @@ export class Controller {
 		}
 		const flushId = data.flushId
 		const flushResolve = this.pendingFlushResolves.get(flushId)
-		if (!flushResolve)
+		if (!flushResolve) 
 			throw new Error('invalid flush id')
 		this.pendingFlushResolves.delete(flushId)
 		flushResolve(undefined)
@@ -176,7 +173,7 @@ export class Controller {
 		return new Proxy(func, propertyProxy(this))
 	}
 	AddGet(objectId, path) {
-		const getId = this.nextGetId++
+		const getId = Math.random() * Number.MAX_SAFE_INTEGER
 		this.AddToQueue({
 			type: 2,
 			objectId: objectId,

@@ -2,7 +2,9 @@
 /**@typedef {import('../../entities/Domain').Domain} Domain*/
 import { WSController } from '../../remote/shims/BrowserController.js'
 let ws = new WSController()
-/**@type {import('../../api').API}*/ let api
+/**@type {import('../../api').API}*/ function api() {
+	return ws.controller.Remote
+}
 let state = {
 	// @ts-ignore
 	/**@type {string}*/ sess: undefined,
@@ -13,13 +15,13 @@ let state = {
 }
 async function start() {
 	await ws.connect('ws://localhost:1337')
-	api = ws.controller.Remote
-	api.fileChangeEvent((/**@type {string}*/ e) => {
+	api().fileChangeEvent((/**@type {string}*/ e) => {
 		let file = e.slice(e.lastIndexOf('\\') + 1, e.lastIndexOf('.'))
 		if(componentRegistry.get(file)) {
-			setTimeout(() => componentRegistry.get(file)?.patch(), 200)
+			setTimeout(() => componentRegistry.get(file)?.forEach(comp => comp.patch()), 200)
 		}
 	})
 }
+
 start()
-export { state, api }
+export { state,  api}

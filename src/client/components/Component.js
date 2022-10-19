@@ -1,6 +1,6 @@
 import { patch } from '../../lib/snabbdom/patch.js'
 
-/**@type {Map<string, Component>}*/ globalThis.componentRegistry = new Map()
+/**@type {Map<string, Component[]>}*/ globalThis.componentRegistry = new Map()
 export class Component {
 	sel
 	data
@@ -33,7 +33,11 @@ export class Component {
 	}
 	constructor() {
 		let key = Object.getPrototypeOf(this).constructor.name
-		globalThis.componentRegistry.set(key, this)
+		if (componentRegistry.get(key)) {
+			componentRegistry.get(key).push(this)	
+		} else {
+			componentRegistry.set(key, [this])
+		}
 	}
 	patch() {
 		let newRender = this.render(this.slots)

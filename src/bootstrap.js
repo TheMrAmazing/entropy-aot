@@ -3,7 +3,6 @@ const babel = require('@babel/parser')
 const traverse = require('@babel/traverse').default
 const t = require('@babel/types')
 const generate = require('@babel/generator').default
-const Module = require('module')
 
 function transform(/**@type {string}*/ source, /**@type {string}*/ filename) {
 	let ast = babel.parse(source, {sourceType: 'module', sourceFilename: filename.slice(filename.lastIndexOf('\\') + 1)})
@@ -149,6 +148,11 @@ require.extensions['.js'] = (module, /**@type {string}*/ file) => {
 		oldHook(module, file)
 	}
 }
+
+// process.on('uncaughtException', function (err) {
+// 	console.log(err)
+// })
+
 const index = process.argv.indexOf('--main')
 require(process.argv[index + 1])
 // const test = require('./test/transformerTest.js')

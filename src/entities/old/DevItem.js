@@ -1,19 +1,22 @@
-import { EntropyEntity } from './Entity'
-var ItemStatus;
-(function (ItemStatus) {
-	ItemStatus['Pending'] = 'pending'
-	ItemStatus['Published'] = 'published'
-	ItemStatus['Approved'] = 'approved'
-})(ItemStatus || (ItemStatus = {}))
+import {EntropyEntity} from '../Entity.js'
+import {Developer} from './Developer.js'
+import { StoreItem } from './StoreItem.js'
+/**@template T @typedef {import('./builtin/types').Owns<T>} Owns*/
+/**@template T @typedef {import('./builtin/types').Unique<T>} Unique*/
+const ItemStatus = {
+	Pending: 'pending',
+	Published: 'published',
+	Approved: 'approved'
+}
 export class DevItem extends EntropyEntity {
-	location
-	name
-	status = ItemStatus.Pending
-	developer
-	developerId
-	storeItem
-	storeItemId
-	config
+	/**@type {Unique<string>?}*/ location
+	/**@type {string}*/ name
+	/**@type {string}*/ status = ItemStatus.Pending
+	/**@type {Developer}*/ developer
+	/**@type {string}*/ developerId
+	/**@type {Owns<StoreItem>?}*/ storeItem
+	/**@type {string?}*/ storeItemId
+	/**@type {Object?}*/ config
 }
 // async function loadConfig(path: string): Promise<any> {
 //     if(path.endsWith('.json')) {

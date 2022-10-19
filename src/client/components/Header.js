@@ -50,12 +50,12 @@ export default class Header extends Component {
 					img({ attrs: { src: state.user.image } }),
 					menu([
 						li({ on: { click: e => router.push('') } }, 'Account Settings'),
-						state.domain.channel ? li({ on: { click: e => router.push('channel') } }, 'Channel Settings') :
+						state.domain?.channel ? li({ on: { click: e => router.push('channel') } }, 'Channel Settings') :
 							li({ on: { click: state.domain ? this.createChannel : this.domainDialog.open } }, 'Create Channel'),
-						state.domain.developer ? li({ on: { click: e => router.push('developer') } }, 'Developer Account') :
+						state.domain?.developer ? li({ on: { click: e => router.push('developer') } }, 'Developer Account') :
 							li({ on: { click: state.domain ? this.createDeveloper : this.domainDialog.open } }, 'Create Developer Account'),
 						li({ on: { click: e => this.logout() } }, 'Log Out'),
-						li('Admin')
+						li('Admin') 
 					])
 				]) :
 				button({ on: { click: async (e) => {

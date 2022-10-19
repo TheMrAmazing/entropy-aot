@@ -9,7 +9,6 @@ function makeSync(/**@type {Promise<any>}*/ promise) {
 export class Receiver {
 	messenger
 	idMap
-	nextObjectId = -1
 	remoteFile
 	constructor(remoteFile, Shim, ...args) {
 		this.remoteFile = remoteFile
@@ -25,7 +24,7 @@ export class Receiver {
 		return ret
 	}
 	ObjectToId(object) {
-		const id = this.nextObjectId--
+		const id = Math.random() * Number.MAX_SAFE_INTEGER
 		this.idMap.set(id, object)
 		return id
 	}
@@ -94,10 +93,10 @@ export class Receiver {
 		return async (...args) => {
 			let wrappedArgs = await Promise.all(args.map(async arg => await this.WrapArg(arg)))
 			this.messenger.postMessage({
-			type: 1, //ReceiverMessageCallback
-			id: id,
-			args: wrappedArgs
-		})}
+				type: 1, //ReceiverMessageCallback
+				id: id,
+				args: wrappedArgs
+			})}
 	}
 	makeFunction(scope, func) {
 		let keys = Object.keys(scope)

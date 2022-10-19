@@ -6,10 +6,12 @@ import { WSReceiver } from './remote//shims/BrowserReceiver.js'
 import { hotReload } from './dev/reload'
 import { hash } from './database/utils.js'
 import { startFileServer } from './static/static.js'
-
 hotReload(__dirname)
-
 export let ws = new WSController()
+
+export function db() {
+	return ws.controller.Remote
+} 
 const receiver = new Receiver('../api.js', WSReceiver, 1337)
 async function start() {
 	await ws.connect('ws://localhost:3000/')

@@ -1,13 +1,13 @@
-import { EntropyEntity } from './Entity'
-export class Domain extends EntropyEntity {
+class Domain {
 	handle
-	developerId
-	developer
-	channelId
-	channel
-	everyoneScopes
-	anonScopes
 	roles
-	user
-
+	constructor() {
+		return new Proxy(this, {
+			set: (object, key, value, proxy) => {
+				object[key] = value;
+				console.log('PROXY SET')
+				return true
+			}
+		})
+	}
 }
