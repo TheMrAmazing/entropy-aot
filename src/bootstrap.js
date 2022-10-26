@@ -149,9 +149,9 @@ require.extensions['.js'] = (module, /**@type {string}*/ file) => {
 	}
 }
 
-// process.on('uncaughtException', function (err) {
-// 	console.log(err)
-// })
+process.on('uncaughtException', function (err) {
+	console.error(err)
+})
 
 const index = process.argv.indexOf('--main')
 require(process.argv[index + 1])

@@ -1,4 +1,4 @@
-import {EntropyEntity} from '../Entity.js'
+import {EntropyEntity} from './Entity.js'
 import {Developer} from './Developer.js'
 import { StoreItem } from './StoreItem.js'
 /**@template T @typedef {import('./builtin/types').Owns<T>} Owns*/

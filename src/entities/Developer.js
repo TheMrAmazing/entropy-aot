@@ -1,4 +1,4 @@
-import {EntropyEntity} from '../Entity.js'
+import {EntropyEntity} from './Entity.js'
 import {DevItem} from './DevItem.js'
 import {Domain} from './Domain.js'
 import {StoreItem} from './StoreItem.js'

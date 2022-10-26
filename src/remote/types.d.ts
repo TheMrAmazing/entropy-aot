@@ -47,30 +47,61 @@ export declare type ReceiverMessageCallback = {
     args: Arg[]
 }
 
-export declare type Arg = {
-    type: 0 //Primitive
+type ArgPrimitive = {
+    type: 0
     value: Primitive
-} | {
+}
+
+type ArgObject = {
     type: 1 //Object
+    root: Object
+    refs: Map<string, Object>
+}
+
+type ArgRemoteObject = {
+    type: 2 //RemoteObject
     value: ObjectID
-} | {
-    type: 2 //Callback
-    value: CallbackID
-} | {
-    type: 3 //ObjectProperty
+}
+
+type ArgRemoteProperty = {
+    type: 3 //RemoteProperty
     value: ObjectID
     path: PathType
-} | {
-    type: 4 //Function
+}
+
+type ArgCallback = {
+    type: 4 //Callback
+    value: CallbackID
+}
+
+type ArgFunction = {
+    type: 5 //Function
     scope: Object
     func: string
-} | {
-    type: 5 //Return
-    value: Object
+}
+
+type ArgReturnPrimitive = {
+    type: 6 //ReturnPrimitive
+    value: Primitive
     getId: GetID
 }
 
-export declare type Command = CommandCall | CommandSet | CommandGet | CommandConstruct;
+type ArgReturnObject = {
+    type: 7 //ReturnObject
+    root: Object,
+    refs: Map<string, Object>,
+    getId: GetID
+}
+
+export declare type Arg = 
+    ArgPrimitive |
+    ArgObject |
+    ArgRemoteObject |
+    ArgRemoteProperty |
+    ArgCallback |
+    ArgFunction |
+    ArgReturnPrimitive |
+    ArgReturnObject
 
 export declare type CommandCall = {
     type: 0
@@ -101,4 +132,42 @@ export declare type CommandConstruct = {
     returnId: ObjectID
 }
 
-declare function CanStructuredClone(o: any): boolean
+export declare type Command = 
+    CommandCall |
+    CommandSet |
+    CommandGet |
+    CommandConstruct
+
+
+declare function isPrimitive(o: any): boolean
+
+type RemoteParams<P extends readonly any[]> = {
+    [key in keyof P]: (Remote<P[key]> | P[key])
+}
+
+type RemoteFunction<T> = {
+    [key in keyof Exclude<T, undefined> as T[key] extends Function ? key : never]: T[key] extends (...args: infer P) => infer R 
+    ? (...args: RemoteParams<P>) => RemoteRoot<Awaited<R>>
+    : never
+}
+
+type RemoteObject<T> = {
+    [key in keyof Exclude<T, undefined> as T[key] extends readonly object ? key : never]: 
+    Remote<T[key]>
+}
+
+type RemotePromise<T> = Promise<{
+    [key in keyof T]: T[key] extends object 
+        ? Remote<Awaited<T[key]>>
+        : T[key]
+}>
+
+type Remote<T> = 
+    RemoteFunction<T> &
+    RemoteObject<T> &
+    Partial<RemotePromise<T>>
+
+export type RemoteRoot<T> =
+        T extends object 
+        ? Remote<T>
+        : T

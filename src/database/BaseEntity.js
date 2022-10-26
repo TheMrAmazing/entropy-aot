@@ -13,8 +13,6 @@ function toPointer(parts) {
 	return '#' + parts.map(part => String(part).replace(/~/g, '~0').replace(/\//g, '~1')).join('/')
 }
 export function BaseEntity(dir) {
-	this.parents = new WeakMap()
-	this.keys = new WeakMap()
 	this.refs = new Map()
 	this.paths = new WeakMap()
 	this.ObjectSymbol = Symbol()
@@ -70,12 +68,6 @@ export function BaseEntity(dir) {
 	const nestedProxy = (path) => {
 		return {
 			get: (target, key, receiver) => {
-				if (key == '_raw') {
-					return target
-				}
-				// if(target.$ref) {
-				//     target = getRef(target.$ref)
-				// }
 				if (isObject(target[key])) {
 					if (target[key].$ref) {
 						let proxy = new Proxy(getRef(target[key].$ref), nestedProxy([...path, key]))

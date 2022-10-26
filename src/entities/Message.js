@@ -1,4 +1,4 @@
-import {EntropyEntity} from '../Entity.js'
+import {EntropyEntity} from './Entity.js'
 import {Room} from './Room.js'
 import {User} from './User.js'
 export class Message extends EntropyEntity {

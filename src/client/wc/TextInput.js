@@ -22,6 +22,28 @@ class TextInput extends HTMLElement {
             box-sizing: border-box;
             width: 100%;
           }
+		  .text-field-label {
+				display: block;
+			}
+			.text-field-input {
+				width: 100%;
+				color: var(--blessed-theme-colors-background);
+				background-color: var(--blessed-theme-colors-primary);
+				&::-ms-clear,
+				&::-ms-reveal {
+					display: none;
+				}
+				&[type="password"] {
+					font: small-caption;
+				}
+			}
+			.text-field-details {
+				display: flex;
+				justify-content: flex-end;
+				& > .errors {
+					flex: 1 0;
+				}
+			}
         </style>
         <label>
         <input>

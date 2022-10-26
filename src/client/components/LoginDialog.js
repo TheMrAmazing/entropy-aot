@@ -37,7 +37,6 @@ export default class LoginDialog extends Component {
 				h1('Login'),
 				label('username'), input({ attrs: { value: 'david.bell@chthonicsoftware.com' } }),
 				label('password'), input({ attrs: { value: 'test' } }),
-				h('text-input'),
 				div([
 					button({ attrs: { type: 'submit' } }, 'submit'),
 					button({ on: { click: this.registerDialog.open } }, 'register'),

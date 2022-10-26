@@ -1,15 +1,10 @@
-import { CanStructuredClone } from './types.js'
-
-/**@typedef {import('./types').Command} Command*/import { objectProxy } from './ObjectProxy.js'
-import { propertyProxy } from './PropertyProxy.js'
+/**@typedef {import('./types').Command} Command*/import { objectProxy } from './RemoteObject.js'
+import { propertyProxy } from './RemoteProperty.js'
 import { refProxy } from './RefProxy.js'
-const functionSymbol = Symbol()
+
 export class Controller {
 	commandQueue = []
 	finalizationRegistry
-	finalizeIntervalMs = 10
-	finalizeIdQueue
-	finalizeTimerId
 	callbackToId = new Map()
 	idToCallback = new Map()
 	pendingGetResolves = new Map()
@@ -35,58 +30,13 @@ export class Controller {
 		}
 		return id
 	}
-	WrapArg(arg) {
-		if (typeof arg === 'function') {
-			const objectId = arg[Controller.ObjectSymbol]
-			if (typeof objectId === 'number') {
-				return {
-					type: 1, //Object
-					value: objectId
-				}
-			}
-			const propertyTarget = arg[Controller.TargetSymbol]
-			if (propertyTarget) {
-				return {
-					type: 3, //ObjectProperty
-					value: propertyTarget._objectId,
-					path: propertyTarget._path
-				}
-			}
-			const isFunction = arg[functionSymbol]
-			if (isFunction) {
-				let vals = arg()
-				return {
-					type: 4, //Function
-					func: vals.func,
-					scope: vals.scope
-				}
-			}
-			return {
-				type: 2, //Callback
-				value: this.GetCallbackId(arg)
-			}
-		}
-		else if (CanStructuredClone(arg)) {
-			return {
-				type: 0, //Primitive
-				value: arg
-			}
-		}
-		else if (typeof arg == 'object') {
-			return {
-				type: 0, //Primitive
-				value: arg
-			}
-		}
-		else
-			throw new Error('invalid argument')
-	}
+
 	MakeReturn(getId, val) {
 		const resolve = this.pendingGetResolves.get(getId)
 		if (val?.$ref != undefined) {
 			val = new Proxy(val, refProxy(this, resolve.objectId, [...resolve.path]))
 		}
-		else if (val != undefined) {
+		else if (!CanStructuredClone(val)) {
 			Reflect.ownKeys(val).forEach(key => {
 				if (val[key].$ref != undefined) {
 					val[key] = new Proxy(val[key], refProxy(this, resolve.objectId, [...resolve.path, key]))
@@ -156,21 +106,6 @@ export class Controller {
 			throw new Error('invalid callback id')
 		const args = data.args.map(arg => this.UnwrapArg(arg))
 		func(...args)
-	}
-	MakeObject(id) {
-		const func = function () { }
-		func._objectId = id
-		const ret = new Proxy(func, objectProxy(this))
-		if (this.finalizationRegistry)
-			this.finalizationRegistry.register(ret, id)
-		return ret
-	}
-	MakeProperty(objectId, path) {
-		const func = function () { }
-		func._objectId = objectId
-		func._path = path
-		func._nextCache = new Map()
-		return new Proxy(func, propertyProxy(this))
 	}
 	AddGet(objectId, path) {
 		const getId = Math.random() * Number.MAX_SAFE_INTEGER

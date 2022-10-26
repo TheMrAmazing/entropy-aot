@@ -1,8 +1,9 @@
 /**@typedef {import('../../entities/User').User} User*/
 /**@typedef {import('../../entities/Domain').Domain} Domain*/
+/// <reference lib="es2017.string" />
 import { WSController } from '../../remote/shims/BrowserController.js'
 let ws = new WSController()
-/**@type {import('../../api').API}*/ function api() {
+/**@return {import('../../remote/types').RemoteRoot<import('../../api').API>}*/ function api() {
 	return ws.controller.Remote
 }
 let state = {
@@ -21,6 +22,7 @@ async function start() {
 			setTimeout(() => componentRegistry.get(file)?.forEach(comp => comp.patch()), 200)
 		}
 	})
+	let x = await api().me('test')
 }
 
 start()

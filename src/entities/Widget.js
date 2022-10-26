@@ -1,4 +1,4 @@
-import {EntropyEntity} from '../Entity.js'
+import {EntropyEntity} from './Entity.js'
 import {Room} from './Room.js'
 import {Channel} from './Channel.js'
 import {StoreItem} from './StoreItem.js'

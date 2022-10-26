@@ -4,6 +4,7 @@ import { state } from '../js/globalState.js'
 import DomainDialog from './DomainDialog.js'
 import { post } from '../js/utils.js'
 import { router } from './Router.js'
+import { api } from '../js/globalState.js'
 export default class Header extends Component {
 	loginDialog
 	domainDialog
@@ -13,7 +14,7 @@ export default class Header extends Component {
 		this.domainDialog = new DomainDialog()
 	}
 	async createDeveloper(e) {
-		state.domain.developer = await post(`/api/${state.user.domain.handle}/developer`)
+		state.domain.developer = await api().createDeveloper(state.sess, state.domain.handle)
 		this.patch()
 	}
 	// admin() {
@@ -32,7 +33,7 @@ export default class Header extends Component {
 		this.patch()
 	}
 	async createChannel(e) {
-		state.domain.channel = await post(`/api/${state.user.domain.handle}/channel`)
+		state.domain.channel = await api().createChannel(state.sess, state.domain.handle)
 		this.patch()
 	}
 	render() {

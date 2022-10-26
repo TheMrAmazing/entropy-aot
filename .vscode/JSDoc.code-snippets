@@ -24,5 +24,35 @@
 		"scope": "javascript,typescript",
 		"prefix": "const",
 		"body": ["/**@type {${1}}*/ const $0"]
+	},
+	"string type": {
+		"scope": "javascript,typescript",
+		"prefix": "string",
+		"body": ["/**@type {string${1}}*/ $0"]
+	},
+	"number type": {
+		"scope": "javascript,typescript",
+		"prefix": "number",
+		"body": ["/**@type {number${1}}*/ $0"]
+	},
+	"boolean type": {
+		"scope": "javascript,typescript",
+		"prefix": "boolean",
+		"body": ["/**@type {boolean${1}}*/ $0"]
+	},
+	"any type": {
+		"scope": "javascript,typescript",
+		"prefix": "any",
+		"body": ["/**@type {any${1}}*/ $0"]
+	},
+	"Map type": {
+		"scope": "javascript,typescript",
+		"prefix": "Map",
+		"body": ["/**@type {Map<${1}>}*/ $0"]
+	},
+	"return type": {
+		"scope": "javascript,typescript",
+		"prefix": "@return",
+		"body": ["/**@return {${1}}*/ $0"]
 	}
 }

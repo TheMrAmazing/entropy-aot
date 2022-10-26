@@ -23,11 +23,6 @@ export class Receiver {
 		const ret = this.idMap.get(id)
 		return ret
 	}
-	ObjectToId(object) {
-		const id = Math.random() * Number.MAX_SAFE_INTEGER
-		this.idMap.set(id, object)
-		return id
-	}
 	IdToObjectProperty(id, path) {
 		const ret = this.idMap.get(id)
 		if (typeof ret === 'undefined')
@@ -40,55 +35,7 @@ export class Receiver {
 			base = base[path[i]]
 		return base
 	}
-	async sanitize(obj) {
-		if (CanStructuredClone(obj)) {
-			return true
-		}
-		if (obj?.then) {
-			obj = await obj
-		}
-		if (CanStructuredClone(obj)) {
-			return true
-		}
-		let success = await Promise.all(Object.keys(obj).map(async (key) => {
-			if (obj[key][Controller.TargetSymbol]) {
-				obj[key] = obj[key][Controller.TargetSymbol]
-				return true
-			}
-			else {
-				let val = await this.sanitize(obj[key])
-				return val
-			}
-		}))
-		if (success.includes(false)) {
-			return false
-		}
-		else {
-			return true
-		}
-	}
-	async WrapArg(arg) {
-		if (CanStructuredClone(arg)) {
-			return {
-				type: 0, //Primitive
-				value: arg
-			}
-		}
-		if (arg.getId) {
-			await this.sanitize(arg.obj)
-			return {
-				type: 5, //Return
-				value: arg.obj,
-				getId: arg.getId
-			}
-		}
-		else {
-			return {
-				type: 1, //Object
-				value: this.ObjectToId(arg)
-			}
-		}
-	}
+
 	GetCallbackShim(id) {
 		return async (...args) => {
 			let wrappedArgs = await Promise.all(args.map(async arg => await this.WrapArg(arg)))
