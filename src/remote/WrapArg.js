@@ -4,12 +4,12 @@ import { isProxy } from 'util/types'
 
 function isObject(value) {
 	return typeof value === 'object'
-        && value != null
-        && !(value instanceof Boolean)
-        && !(value instanceof Date)
-        && !(value instanceof Number)
-        && !(value instanceof RegExp)
-        && !(value instanceof String)
+		&& value != null
+		&& !(value instanceof Boolean)
+		&& !(value instanceof Date)
+		&& !(value instanceof Number)
+		&& !(value instanceof RegExp)
+		&& !(value instanceof String)
 }
 
 function isCloneable(obj) {

@@ -15,44 +15,49 @@
 	// 	],
 	// 	"description": "Log output to console"
 	// },
-	"Typed let": {
+	"@type let": {
 		"scope": "javascript,typescript",
 		"prefix": "let",
 		"body": ["/**@type {${1}}*/ let $0"]
 	},
-	"Typed const": {
+	"@type const": {
 		"scope": "javascript,typescript",
 		"prefix": "const",
 		"body": ["/**@type {${1}}*/ const $0"]
 	},
-	"string type": {
+	"@type string": {
 		"scope": "javascript,typescript",
 		"prefix": "string",
-		"body": ["/**@type {string${1}}*/ $0"]
+		"body": ["/**@type {string${1}}*/$0"]
 	},
-	"number type": {
+	"@type number": {
 		"scope": "javascript,typescript",
 		"prefix": "number",
-		"body": ["/**@type {number${1}}*/ $0"]
+		"body": ["/**@type {number${1}}*/$0"]
 	},
-	"boolean type": {
+	"@type boolean": {
 		"scope": "javascript,typescript",
 		"prefix": "boolean",
-		"body": ["/**@type {boolean${1}}*/ $0"]
+		"body": ["/**@type {boolean${1}}*/$0"]
 	},
-	"any type": {
+	"@type any": {
 		"scope": "javascript,typescript",
 		"prefix": "any",
-		"body": ["/**@type {any${1}}*/ $0"]
+		"body": ["/**@type {any${1}}*/$0"]
 	},
-	"Map type": {
+	"@type Map": {
 		"scope": "javascript,typescript",
 		"prefix": "Map",
-		"body": ["/**@type {Map<${1}>}*/ $0"]
+		"body": ["/**@type {Map<${1}>}*/$0"]
 	},
-	"return type": {
+	"@type": {
 		"scope": "javascript,typescript",
-		"prefix": "@return",
-		"body": ["/**@return {${1}}*/ $0"]
+		"prefix": "type",
+		"body": ["/**@type {${1}}*/$0"]
+	},
+	"@return": {
+		"scope": "javascript,typescript",
+		"prefix": "return",
+		"body": ["/**@return {${1}}*/$0"]
 	}
 }

@@ -18,13 +18,13 @@ export default class Header extends Component {
 		this.patch()
 	}
 	// admin() {
-	//     if (state.user.roles) {
-	//         let roles = state.user.roles
-	//         let adminRole = roles.filter((role) => role.name == 'Admin')
-	//         if (adminRole) {
-	//             this.$router.push('/admin')
-	//         }
-	//     }
+	//	 if (state.user.roles) {
+	//		 let roles = state.user.roles
+	//		 let adminRole = roles.filter((role) => role.name == 'Admin')
+	//		 if (adminRole) {
+	//			 this.$router.push('/admin')
+	//		 }
+	//	 }
 	// }
 	async logout() {
 		await post('/api/logout')

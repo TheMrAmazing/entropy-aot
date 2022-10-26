@@ -1,44 +1,44 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <title>Bun App</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="./client/assets/index.css">
-    <script type="module" src="./client/client.js"></script>
+	<meta charset="utf-8">
+	<title>Bun App</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="./client/assets/index.css">
+	<script type="module" src="./client/client.js"></script>
 <svg style="position: absolute; top: 0px; left: 0px; z-index: -99">
-    <defs>
-        <filter id="glow">
-            <feGaussianBlur color-interpolation-filters="sRGB" in="SourceGraphic" stdDeviation="12" result="blur" />
-            <feBlend color-interpolation-filters="sRGB" in="SourceGraphic" in2="blur" mode="screen"
-                result="glowEffect" />
-        </filter>
-    </defs>
+	<defs>
+		<filter id="glow">
+			<feGaussianBlur color-interpolation-filters="sRGB" in="SourceGraphic" stdDeviation="12" result="blur" />
+			<feBlend color-interpolation-filters="sRGB" in="SourceGraphic" in2="blur" mode="screen"
+				result="glowEffect" />
+		</filter>
+	</defs>
   </svg>
   <svg style="position: absolute; top: 0px; left: 0px; z-index: -99">
-    <defs>
-        <filter id="anaglyph3d">
-            <feOffset result="offUp" in="SourceGraphic" dx="-1" dy="-1" />
-            <feOffset result="offDown" in="SourceGraphic" dx="1" dy="1" />
-            <feComponentTransfer in="offUp" result="red">
-                <feFuncR type="identity" />
-                <feFuncG type="discrete" tableValues="0" />
-                <feFuncB type="discrete" tableValues="0" />
-            </feComponentTransfer>
-            <feComponentTransfer in="offDown" result="green">
-                <feFuncR type="discrete" tableValues="0" />
-                <feFuncG type="identity" />
-                <feFuncB type="discrete" tableValues="0" />
-            </feComponentTransfer>
-            <feComponentTransfer in="SourceGraphic" result="blue">
-                <feFuncR type="discrete" tableValues="0" />
-                <feFuncG type="discrete" tableValues="0" />
-                <feFuncB type="identity" />
-            </feComponentTransfer>
-            <feBlend in="red" in2="green" mode="screen" result="rg" />
-            <feBlend in="rg" in2="blue" mode="screen" result="rgb" />
-        </filter>
-    </defs>
+	<defs>
+		<filter id="anaglyph3d">
+			<feOffset result="offUp" in="SourceGraphic" dx="-1" dy="-1" />
+			<feOffset result="offDown" in="SourceGraphic" dx="1" dy="1" />
+			<feComponentTransfer in="offUp" result="red">
+				<feFuncR type="identity" />
+				<feFuncG type="discrete" tableValues="0" />
+				<feFuncB type="discrete" tableValues="0" />
+			</feComponentTransfer>
+			<feComponentTransfer in="offDown" result="green">
+				<feFuncR type="discrete" tableValues="0" />
+				<feFuncG type="identity" />
+				<feFuncB type="discrete" tableValues="0" />
+			</feComponentTransfer>
+			<feComponentTransfer in="SourceGraphic" result="blue">
+				<feFuncR type="discrete" tableValues="0" />
+				<feFuncG type="discrete" tableValues="0" />
+				<feFuncB type="identity" />
+			</feComponentTransfer>
+			<feBlend in="red" in2="green" mode="screen" result="rg" />
+			<feBlend in="rg" in2="blue" mode="screen" result="rgb" />
+		</filter>
+	</defs>
 </svg>
 </head>
   <body>

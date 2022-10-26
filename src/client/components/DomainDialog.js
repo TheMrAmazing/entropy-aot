@@ -7,8 +7,8 @@ export default class DomainDialog extends Component {
 	async submit(e) {
 		e.preventDefault()
 		let vals = Object.entries(e.target)
-		    .filter(tar => tar[1].constructor.name == 'HTMLInputElement')
-		    .map(tar => tar[1].value)
+			.filter(tar => tar[1].constructor.name == 'HTMLInputElement')
+			.map(tar => tar[1].value)
 		let domain = await api().createDomain(state.sess, vals[0])
 		if(domain == undefined || typeof domain == 'string') {
 			console.error(domain)

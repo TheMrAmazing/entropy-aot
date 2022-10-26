@@ -2,42 +2,42 @@ function genBorderStyles(options) {
 	let { width, height, foreground, family, base64Src, chars } = options
 	let { n, w, e, s, nw, sw, ne, se } = chars
 	let svg = `<svg width="${3 * width}px" height="${3 * height}px" xmlns="http://www.w3.org/2000/svg">
-        <style>
-            @font-face {
-                font-family: "${family}";
-                src: url("${base64Src}") format('truetype');
-                font-weight: normal;
-                font-style: normal;
-                -webkit-font-smoothing: none;    
-            }
-            .bordertext {
-                font-family: "${family}";
-                font-size: ${height}px;
-                line-height: ${height}px;
-                letter-spacing: 0px;
-            }
-            .c1 {
-                fill: ${foreground};
-            }
-        </style>
+		<style>
+			@font-face {
+				font-family: "${family}";
+				src: url("${base64Src}") format('truetype');
+				font-weight: normal;
+				font-style: normal;
+				-webkit-font-smoothing: none;	
+			}
+			.bordertext {
+				font-family: "${family}";
+				font-size: ${height}px;
+				line-height: ${height}px;
+				letter-spacing: 0px;
+			}
+			.c1 {
+				fill: ${foreground};
+			}
+		</style>
 
-        <text class="bordertext c1" text-rendering="geometricPrecision" text-antialiasing="false" textLength="${width}px" letter-spacing="0px" x="0px" y="${height}px" width="${width}px" height="${height}px">${nw}</text>
-        <text class="bordertext c1" text-rendering="geometricPrecision" text-antialiasing="false" textLength="${width}px" letter-spacing="0px" x="${width}px" y="${height}px" width="${width}px" height="${height}px">${n}</text>
-        <text class="bordertext c1" text-rendering="geometricPrecision" text-antialiasing="false" textLength="${width}px" letter-spacing="0px" x="${2 * width}px" y="${height}px" width="${width}px" height="${height}px">${ne}</text>
-        <text class="bordertext c1" text-rendering="geometricPrecision" text-antialiasing="false" textLength="${width}px" letter-spacing="0px" x="0px" y="${2 * height}px" width="${width}px" height="${height}px">${w}</text>
-        <text class="bordertext c1" text-rendering="geometricPrecision" text-antialiasing="false" textLength="${width}px" letter-spacing="0px" x="${2 * width}px" y="${2 * height}px" width="${width}px" height="${height}px">${e}</text>
-        <text class="bordertext c1" text-rendering="geometricPrecision" text-antialiasing="false" textLength="${width}px" letter-spacing="0px" x="0px" y="${3 * height}px" width="${width}px" height="${height}px">${sw}</text>
-        <text class="bordertext c1" text-rendering="geometricPrecision" text-antialiasing="false" textLength="${width}px" letter-spacing="0px" x="${width}px" y="${3 * height}px" width="${width}px" height="${height}px">${s}</text>
-        <text class="bordertext c1" text-rendering="geometricPrecision" text-antialiasing="false" textLength="${width}px" letter-spacing="0px" x="${2 * width}px" y="${3 * height}px" width="${width}px" height="${height}px">${se}</text>
-    </svg>`
+		<text class="bordertext c1" text-rendering="geometricPrecision" text-antialiasing="false" textLength="${width}px" letter-spacing="0px" x="0px" y="${height}px" width="${width}px" height="${height}px">${nw}</text>
+		<text class="bordertext c1" text-rendering="geometricPrecision" text-antialiasing="false" textLength="${width}px" letter-spacing="0px" x="${width}px" y="${height}px" width="${width}px" height="${height}px">${n}</text>
+		<text class="bordertext c1" text-rendering="geometricPrecision" text-antialiasing="false" textLength="${width}px" letter-spacing="0px" x="${2 * width}px" y="${height}px" width="${width}px" height="${height}px">${ne}</text>
+		<text class="bordertext c1" text-rendering="geometricPrecision" text-antialiasing="false" textLength="${width}px" letter-spacing="0px" x="0px" y="${2 * height}px" width="${width}px" height="${height}px">${w}</text>
+		<text class="bordertext c1" text-rendering="geometricPrecision" text-antialiasing="false" textLength="${width}px" letter-spacing="0px" x="${2 * width}px" y="${2 * height}px" width="${width}px" height="${height}px">${e}</text>
+		<text class="bordertext c1" text-rendering="geometricPrecision" text-antialiasing="false" textLength="${width}px" letter-spacing="0px" x="0px" y="${3 * height}px" width="${width}px" height="${height}px">${sw}</text>
+		<text class="bordertext c1" text-rendering="geometricPrecision" text-antialiasing="false" textLength="${width}px" letter-spacing="0px" x="${width}px" y="${3 * height}px" width="${width}px" height="${height}px">${s}</text>
+		<text class="bordertext c1" text-rendering="geometricPrecision" text-antialiasing="false" textLength="${width}px" letter-spacing="0px" x="${2 * width}px" y="${3 * height}px" width="${width}px" height="${height}px">${se}</text>
+	</svg>`
 	let base64 = window.btoa(unescape(encodeURIComponent(svg)))
 	return `
-        border-image-source: url(data:image/svg+xml;base64,${base64});
-        border-image-repeat: repeat;
-        border-width: ${height}px ${width}px;
-        border-image-slice: ${height} ${width};
-        border-style: solid;
-    `
+		border-image-source: url(data:image/svg+xml;base64,${base64});
+		border-image-repeat: repeat;
+		border-width: ${height}px ${width}px;
+		border-image-slice: ${height} ${width};
+		border-style: solid;
+	`
 }
 export function createAsciiBorderChars(chars) {
 	return {
@@ -136,11 +136,11 @@ function makeBorders(options) {
 		ctx.fillText(se, ws * 2, hs * 2)
 		let durl = canvas.toDataURL()
 		return `
-        border-image-source: url(${durl});
-        border-image-repeat: repeat;
-        /*border-width: ${height}px ${width}px;*/
-        border-image-slice: ${hs} ${ws};
-        border-style: solid;
-    `
+		border-image-source: url(${durl});
+		border-image-repeat: repeat;
+		/*border-width: ${height}px ${width}px;*/
+		border-image-slice: ${hs} ${ws};
+		border-style: solid;
+	`
 	}
 }

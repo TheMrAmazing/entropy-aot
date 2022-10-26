@@ -9,9 +9,9 @@ globalThis.functionSymbol = Symbol()
 const oldConstructor = Proxy.constructor
 
 Proxy.constructor = (target, handler) => {
-    let ret = oldConstructor(target, handler)
-    Object.defineProperty(this, proxySymbol, {enumerable: false, value: target})
-    return ret
+	let ret = oldConstructor(target, handler)
+	Object.defineProperty(this, proxySymbol, {enumerable: false, value: target})
+	return ret
 }
 console.log(oldConstructor)
 //

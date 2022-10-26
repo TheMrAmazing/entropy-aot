@@ -54,9 +54,9 @@ export function h(sel, b, c) {
 		}
 	}
 	if (sel[0] === 's' &&
-        sel[1] === 'v' &&
-        sel[2] === 'g' &&
-        (sel.length === 3 || sel[3] === '.' || sel[3] === '#')) {
+		sel[1] === 'v' &&
+		sel[2] === 'g' &&
+		(sel.length === 3 || sel[3] === '.' || sel[3] === '#')) {
 		addNS(data, children, sel)
 	}
 	return vnode(sel, data, children, text, undefined)

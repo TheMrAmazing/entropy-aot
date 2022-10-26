@@ -2,12 +2,12 @@ import { existsSync, readFileSync, writeFileSync, promises } from 'node:fs'
 
 function isObject(value) {
 	return typeof value === 'object'
-        && value != null
-        && !(value instanceof Boolean)
-        && !(value instanceof Date)
-        && !(value instanceof Number)
-        && !(value instanceof RegExp)
-        && !(value instanceof String)
+		&& value != null
+		&& !(value instanceof Boolean)
+		&& !(value instanceof Date)
+		&& !(value instanceof Number)
+		&& !(value instanceof RegExp)
+		&& !(value instanceof String)
 }
 function toPointer(parts) {
 	return '#' + parts.map(part => String(part).replace(/~/g, '~0').replace(/\//g, '~1')).join('/')

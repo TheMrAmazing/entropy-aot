@@ -28,7 +28,7 @@ export async function hostDir(/**@type {string[]}*/ ...dirs) {
 	let res = (await Promise.all(
 		dirs.map(dir => getFiles(process.cwd() + '\\src\\' + dir))
 	)).flat()
-    
+	
 	let files = await Promise.all(res.map(async (/**@type {string}*/ filename) => {
 		return [fileToURL(filename), (await readFile(filename))]
 	}))
@@ -68,13 +68,13 @@ export async function startFileServer() {
 		res.setHeader('Content-Type', type)
 		let file = urls[url]
 		
-	    if(file) {
-		    res.end(file)
+		if(file) {
+			res.end(file)
 		} else {
 			res.end('')
 		}
 	})
-    
+	
 	server.listen(8080, () => {
 		console.log('Server running at http://localhost:8080/')
 	})

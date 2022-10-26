@@ -8,20 +8,20 @@ class TextInput extends HTMLElement {
 		// Don’t need to register ‘formdata’ event handler.
 		this.attachShadow({ mode: 'open', delegatesFocus: true })
 		this.shadowRoot.innerHTML = /* html */ `
-        <style>
-          :host {
-            display: block; 
-            padding: 3px;
-            border: 2px solid #ccc;
-            box-sizing: border-box;
-          }
-          :host(:invalid) {
-            border: 2px solid red;
-          }
-          input {
-            box-sizing: border-box;
-            width: 100%;
-          }
+		<style>
+		  :host {
+			display: block; 
+			padding: 3px;
+			border: 2px solid #ccc;
+			box-sizing: border-box;
+		  }
+		  :host(:invalid) {
+			border: 2px solid red;
+		  }
+		  input {
+			box-sizing: border-box;
+			width: 100%;
+		  }
 		  .text-field-label {
 				display: block;
 			}
@@ -44,15 +44,15 @@ class TextInput extends HTMLElement {
 					flex: 1 0;
 				}
 			}
-        </style>
-        <label>
-        <input>
-        <div>
-            <span>
+		</style>
+		<label>
+		<input>
+		<div>
+			<span>
 
-            </span>
-        </div>
-            `
+			</span>
+		</div>
+			`
 		this.input_ = this.shadowRoot.querySelector('input')
 		this.input_.addEventListener('input', () => this.onInput())
 		// Do something if <label> is clicked.
@@ -61,7 +61,7 @@ class TextInput extends HTMLElement {
 	// Called whenever the value is updated.
 	onInput() {
 		if (!this.matches(':disabled') && this.hasAttribute('required') &&
-            this.value.length < 5)
+			this.value.length < 5)
 			this.internals_.setValidity({ customError: true }, 'Use at least 5 characters.')
 		else
 			this.internals_.setValidity({})

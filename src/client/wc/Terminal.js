@@ -4,99 +4,99 @@ class Terminal extends HTMLElement {
 		super()
 		this.attachShadow({ mode: 'open', delegatesFocus: true })
 		this.shadowRoot.innerHTML = /* html */ `
-        <style>
-        .control-char {
-            color: var(--blessed-theme-colors-palette-0);
-            opacity: 0.5;
-            align-self: flex-end;
-        }
+		<style>
+		.control-char {
+			color: var(--blessed-theme-colors-palette-0);
+			opacity: 0.5;
+			align-self: flex-end;
+		}
 
-        .control {
-            color: var(--blessed-theme-colors-palette-0);
-            background-color: transparent;
-            resize: none;
-            caret-color: transparent;
-            width: 100%;
+		.control {
+			color: var(--blessed-theme-colors-palette-0);
+			background-color: transparent;
+			resize: none;
+			caret-color: transparent;
+			width: 100%;
 
-            font-weight: inherit;
-            font-family: inherit;
-            font-style: inherit;
-            color: inherit;
-            font-size: inherit;
-            border: 0px none;
-            outline: 0px;
-            padding: 0px;
-            margin: 0px;
-            z-index: auto;
-            background-color: transparent;
-            line-height: inherit;
-            -webkit-font-smoothing: none;
-            -moz-font-smoothing: never;
-            letter-spacing: inherit;
-            font-family: var(--family);
-            
-            overflow-y: auto;
-            overflow-x: hidden;
-            color: var(--palette-0);
-            font-size: var(--h);
-            line-height: var(--h);
-            letter-spacing: 0px;
-            scroll-snap-type: both;
-            scroll-snap-align: start;
-        }
-        .control-focus,
-        .control-char-focus {
-            color: var(--blessed-theme-colors-palette-0);
-            opacity: 100%;
-        }
-        .input {
-            width: calc(100% - 2 * var(--w));
-            max-height: calc(5 * var(--h));
-            overflow: hidden;
-        }
-        .container::placeholder {
-            color: var(--blessed-theme-colors-palette-0);
-            opacity: 50%;
-        }
-        .container {
-            display: flex;
-            flex-direction: row;
-            width: 100%;
-            overflow: hidden;
+			font-weight: inherit;
+			font-family: inherit;
+			font-style: inherit;
+			color: inherit;
+			font-size: inherit;
+			border: 0px none;
+			outline: 0px;
+			padding: 0px;
+			margin: 0px;
+			z-index: auto;
+			background-color: transparent;
+			line-height: inherit;
+			-webkit-font-smoothing: none;
+			-moz-font-smoothing: never;
+			letter-spacing: inherit;
+			font-family: var(--family);
+			
+			overflow-y: auto;
+			overflow-x: hidden;
+			color: var(--palette-0);
+			font-size: var(--h);
+			line-height: var(--h);
+			letter-spacing: 0px;
+			scroll-snap-type: both;
+			scroll-snap-align: start;
+		}
+		.control-focus,
+		.control-char-focus {
+			color: var(--blessed-theme-colors-palette-0);
+			opacity: 100%;
+		}
+		.input {
+			width: calc(100% - 2 * var(--w));
+			max-height: calc(5 * var(--h));
+			overflow: hidden;
+		}
+		.container::placeholder {
+			color: var(--blessed-theme-colors-palette-0);
+			opacity: 50%;
+		}
+		.container {
+			display: flex;
+			flex-direction: row;
+			width: 100%;
+			overflow: hidden;
 
-        }
-        .caret {
-            position: absolute;
-            width: var(--w);
-            height: var(--h);
-            backdrop-filter: invert(100%);
-            animation: blink 1s steps(5, start) infinite;
-        }
-        .measurer {
-            max-width: calc(100% - 2 * var(--w));
-            white-space: pre-wrap;
-            position: fixed;
-            overflow-x: hidden;
-        }
-        @keyframes blink {
-            from { visibility: visible; }
-            to { visibility: hidden; }
-        }
-        </style>
-        <div id="container" class="container">
-        <label id="control-char" class="control-char">$></label>
-        <div id="input" class="input">
-            <textarea
-                id="textareaEl"
-                :placeholder="placeholder"
-                :disabled="disabled"
-                rows="1"
-                class="control"
-            ></textarea>
-            <div style="opacity: 0;" id="caretEl" class="caret"></div>
-        </div>
-    </div>
-            `
+		}
+		.caret {
+			position: absolute;
+			width: var(--w);
+			height: var(--h);
+			backdrop-filter: invert(100%);
+			animation: blink 1s steps(5, start) infinite;
+		}
+		.measurer {
+			max-width: calc(100% - 2 * var(--w));
+			white-space: pre-wrap;
+			position: fixed;
+			overflow-x: hidden;
+		}
+		@keyframes blink {
+			from { visibility: visible; }
+			to { visibility: hidden; }
+		}
+		</style>
+		<div id="container" class="container">
+		<label id="control-char" class="control-char">$></label>
+		<div id="input" class="input">
+			<textarea
+				id="textareaEl"
+				:placeholder="placeholder"
+				:disabled="disabled"
+				rows="1"
+				class="control"
+			></textarea>
+			<div style="opacity: 0;" id="caretEl" class="caret"></div>
+		</div>
+	</div>
+			`
 		this.input_ = this.shadowRoot.getElementById('textareaEl')
 		this.input_.addEventListener('input', e => this.onInput(e))
 		this.input_.addEventListener('keyup', e => this.onKeyup(e))
@@ -153,9 +153,9 @@ class Terminal extends HTMLElement {
 			setTimeout(() => { this.resize(target) }, 0)
 		}
 		if (e.code == 'ArrowLeft'
-            || e.code == 'ArrowRight'
-            || e.code == 'ArrowDown'
-            || e.code == 'ArrowUp') {
+			|| e.code == 'ArrowRight'
+			|| e.code == 'ArrowDown'
+			|| e.code == 'ArrowUp') {
 			this.setCaretPos(target)
 		}
 	}

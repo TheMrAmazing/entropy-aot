@@ -6,8 +6,8 @@ export default class RegisterDialog extends Component {
 	submit(e) {
 		e.preventDefault()
 		// console.log(Object.entries(e.target)
-		//     .filter(tar => tar[1].constructor.name == 'HTMLInputElement')
-		//     .map(tar => tar[1].value))
+		//	 .filter(tar => tar[1].constructor.name == 'HTMLInputElement')
+		//	 .map(tar => tar[1].value))
 		registerDialog.close()
 	}
 	open(e) {

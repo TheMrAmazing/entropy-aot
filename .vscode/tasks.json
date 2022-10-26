@@ -1,21 +1,21 @@
 {
-    "version": "2.0.0",
-    
-    "tasks": [
-        {
-            "label": "start-client",
-            "type": "npm",
-            "script": "serve:client",
-            "problemMatcher": [],
-            "isBackground": true,
-        },
-    ],
-    "inputs": [
-        {
-          "id": "terminate",
-          "type": "command",
-          "command": "workbench.action.tasks.terminate",
-          "args": "terminateAll"
-        }
-    ]
+	"version": "2.0.0",
+	
+	"tasks": [
+		{
+			"label": "start-client",
+			"type": "npm",
+			"script": "serve:client",
+			"problemMatcher": [],
+			"isBackground": true,
+		},
+	],
+	"inputs": [
+		{
+		  "id": "terminate",
+		  "type": "command",
+		  "command": "workbench.action.tasks.terminate",
+		  "args": "terminateAll"
+		}
+	]
 }

@@ -1,5 +1,5 @@
 {
-    "compilerOptions": {
+	"compilerOptions": {
 		"lib": [
 			"DOM",
 			"ESNext"
@@ -19,10 +19,10 @@
 		"noUnusedParameters": false,
 		"types": ["node", "dom", "acorn"],
 		"outDir": "dist"
-    },
-    "exclude": [
-      "node_modules/**/*"
-    ],
+	},
+	"exclude": [
+	  "node_modules/**/*"
+	],
 	"include": [
 		"./src/**/*"
 	]
