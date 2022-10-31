@@ -8,6 +8,6 @@
   },
   "devDependencies": {
     "@types/node": "^18.8.2",
-    "@types/ws": "^8.5.3",
+    "@types/ws": "^8.5.3"
   }
 }
