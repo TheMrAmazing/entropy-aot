@@ -17,7 +17,7 @@ export function BaseEntity(dir) {
 	this.paths = new WeakMap()
 	this.ObjectSymbol = Symbol()
 	const getRef = (ref) => {
-		let val = this.refs[ref]
+		let val = this.refs.get(ref)
 		if (val) {
 			return val
 		}
@@ -68,6 +68,9 @@ export function BaseEntity(dir) {
 	const nestedProxy = (path) => {
 		return {
 			get: (target, key, receiver) => {
+				if (key == ProxySymbol) {
+					return target
+				}
 				if (isObject(target[key])) {
 					if (target[key].$ref) {
 						let proxy = new Proxy(getRef(target[key].$ref), nestedProxy([...path, key]))
@@ -75,10 +78,12 @@ export function BaseEntity(dir) {
 						return proxy
 					}
 				}
+				// console.log(target)
 				return target[key]
 			},
 			set: (target, key, value) => {
 				target[key] = replacer([...path, key], value)
+				// console.log(target)
 				if (isObject(target)) {
 					let pointer = toPointer([...path])
 					this.refs.set(pointer, target)

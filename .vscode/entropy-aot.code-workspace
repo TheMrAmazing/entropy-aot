@@ -6,7 +6,7 @@
 	],
 	"settings": {
 		"autoHide.autoHidePanel": false,
-		"inlineFold.regex": "(\\/\\*\\*@type {|}\\*\\/(?: const| let|))",
+		"inlineFold.regex": "(\\/\\*\\*@typedef {|\\/\\*\\*@returns {|\\/\\*\\*@type {|}\\*\\/|\\*\\/(?: const| let|))",
 		"inlineFold.regexGroup": "1",
 		"inlineFold.maskChar": "",
 		"inlineFold.after": "",
@@ -19,6 +19,17 @@
 		"editor.codeActionsOnSave": {
 			"source.fixAll.eslint": true
 		},
-		"eslint.validate": ["javascript"]
+		"eslint.validate": [
+			"javascript"
+		],
+		"editor.detectIndentation": false,
+        "editor.tabSize": 4,
+        "editor.insertSpaces": false,
+		"javascript.format.semicolons": "remove",
+		"javascript.preferences.importModuleSpecifierEnding": "js",
+		"javascript.preferences.quoteStyle": "single",
+		"js/ts.implicitProjectConfig.target": "ESNext",
+		"typescript.surveys.enabled": false,
+		"typescript.preferences.importModuleSpecifierEnding": "js"
 	}
 }

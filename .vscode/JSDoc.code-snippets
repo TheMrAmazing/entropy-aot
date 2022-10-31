@@ -50,6 +50,11 @@
 		"prefix": "Map",
 		"body": ["/**@type {Map<${1}>}*/$0"]
 	},
+	"@type Function": {
+		"scope": "javascript,typescript",
+		"prefix": "Function",
+		"body": ["/**@type {Function${1}}*/$0"]
+	},
 	"@type": {
 		"scope": "javascript,typescript",
 		"prefix": "type",
@@ -59,5 +64,10 @@
 		"scope": "javascript,typescript",
 		"prefix": "return",
 		"body": ["/**@return {${1}}*/$0"]
+	},
+	"@typedef import": {
+		"scope": "javascript,typescript",
+		"prefix": "import",
+		"body": ["/**@typedef {import('${1}').$2} $3*/$0"]
 	}
 }

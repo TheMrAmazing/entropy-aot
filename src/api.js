@@ -70,8 +70,6 @@ export class API {
 			let user = getUser(sess)
 			let domain = new Domain()
 			domain.user = user
-			/**@type {import('./remote/types').Remote<Domain>}*/ let y 
-			user.domain = y
 			user.domain = domain
 			domain.handle = handle
 			db().domains.push(y, domain)

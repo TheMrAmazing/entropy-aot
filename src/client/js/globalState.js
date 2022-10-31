@@ -1,10 +1,10 @@
-/**@typedef {import('../../entities/User').User} User*/
+///<reference path="../../entities/User.js" />
 /**@typedef {import('../../entities/Domain').Domain} Domain*/
-/// <reference lib="es2017.string" />
+
 import { WSController } from '../../remote/shims/BrowserController.js'
 let ws = new WSController()
 /**@return {import('../../remote/types').RemoteRoot<import('../../api').API>}*/ function api() {
-	return ws.controller.Remote
+	return ws.controller.remote
 }
 let state = {
 	// @ts-ignore

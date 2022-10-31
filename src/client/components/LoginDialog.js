@@ -13,7 +13,8 @@ export default class LoginDialog extends Component {
 		let vals = Object.entries(e.target)
 			.filter(tar => tar[1].constructor.name == 'HTMLInputElement')
 			.map((tar) => tar[1].value)
-		let ret = await api().login(vals[0], vals[1])
+		let x = api().login(vals[0], vals[1])
+		let ret = await x
 		let sess = ret.sess
 		let user = ret.user
 		if (user) {

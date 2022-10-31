@@ -1,27 +1,50 @@
-/**@typedef {import('./types').Command} Command*/import { objectProxy } from './RemoteObject.js'
-import { propertyProxy } from './RemoteProperty.js'
-import { refProxy } from './RefProxy.js'
+/**@typedef {import('./types').Arg} Arg*/
+/**@typedef {import('./types').Command} Command*/
+/**@typedef {import('./types').ReceiverMessageDone} ReceiverMessageDone*/
+/**@typedef {import('./types').ReceiverMessageCallback} ReceiverMessageCallback*/
+/**@typedef {import('./types').ReceiverMessage} ReceiverMessage*/
+/**@typedef {import('./types').Resolve} Resolve*/
+import { Remote } from './RemoteProxy.js'
+import { Args } from './TypeFuncs.js'
+import { recycle } from './WrapArg.js'
 
 export class Controller {
-	commandQueue = []
-	finalizationRegistry
-	callbackToId = new Map()
-	idToCallback = new Map()
-	pendingGetResolves = new Map()
-	pendingFlushResolves = new Map()
+	/**@type {Command[]}*/ commandQueue = []
+	/**@type {Map<Function, number>}*/ callbackToId = new Map()
+	/**@type {Map<number, Function>}*/ idToCallback = new Map()
+	/**@type {Map<number, Resolve>}*/ pendingGetResolves = new Map()
+	/**@type {Map<number, Function>}*/ pendingFlushResolves = new Map()
 	isPendingFlush = false
-	static ObjectSymbol = Symbol()
-	static TargetSymbol = Symbol()
 	messenger
-	Remote = this.MakeObject(0)
-	AddToQueue(command) {
+	finalizeTimerId
+	finalizeIntervalMs = 10
+	/**@type {number[]}*/ finalizeIdQueue = []
+
+	finalizationRegistry = new FinalizationRegistry((/**@type {number}*/ id) => {
+		this.finalizeIdQueue.push(id)
+		if (this.finalizeTimerId === -1) {
+			this.finalizeTimerId = setTimeout(() => {
+				this.finalizeTimerId = -1
+				this.messenger.postMessage({
+					type: 0,
+					ids: this.finalizeIdQueue	
+				})
+				this.finalizeIdQueue.length = 0
+			}, this.finalizeIntervalMs)
+		}
+	})
+
+	remote = new Remote(this, 0)
+
+	AddToQueue(/**@type {Command}*/ command) {
 		this.commandQueue.push(command)
 		if (!this.isPendingFlush) {
 			this.isPendingFlush = true
 			Promise.resolve().then(() => this.Flush())
 		}
 	}
-	GetCallbackId(func) {
+
+	GetCallbackId(/**@type {Function}*/ func) {
 		let id = this.callbackToId.get(func)
 		if (typeof id === 'undefined') {
 			id = Math.random() * Number.MAX_SAFE_INTEGER
@@ -31,37 +54,33 @@ export class Controller {
 		return id
 	}
 
-	MakeReturn(getId, val) {
-		const resolve = this.pendingGetResolves.get(getId)
-		if (val?.$ref != undefined) {
-			val = new Proxy(val, refProxy(this, resolve.objectId, [...resolve.path]))
-		}
-		else if (!CanStructuredClone(val)) {
-			Reflect.ownKeys(val).forEach(key => {
-				if (val[key].$ref != undefined) {
-					val[key] = new Proxy(val[key], refProxy(this, resolve.objectId, [...resolve.path, key]))
-				}
-			})
-		}
-		return val
-	}
-	UnwrapArg(arg) {
+	UnwrapArg(/**@type {Arg}*/ arg, objectId, path) {
 		switch (arg.type) {
-		case 0: //Primitive
+		case Args.Primitive:
 			return arg.value
-		case 1: //Object
-			return this.MakeObject(arg.value)
-		case 5: //Return
-			return this.MakeReturn(arg.getId, arg.value)
+		case Args.Object:
+			return recycle(arg.root, arg.refs, this, objectId, path)
 		default:
 			throw new Error('invalid arg type')
 		}
 	}
-	Flush() {
+
+	async Flush() {
 		this.isPendingFlush = false
 		if (!this.commandQueue.length)
 			return Promise.resolve()
 		const flushId = Math.random() * Number.MAX_SAFE_INTEGER
+		this.commandQueue = await Promise.all(this.commandQueue.map(async (/**@type {Command}*/ command) => {
+			switch (command.type) {
+			case 1:
+				command.argsData = await command.argsData
+			case 2:
+				break
+			default:
+				command.argsData = await Promise.all(command.argsData)
+			}
+			return command
+		}))
 		this.messenger.postMessage({
 			type: 1,
 			commands: this.commandQueue,
@@ -72,7 +91,8 @@ export class Controller {
 			this.pendingFlushResolves.set(flushId, resolve)
 		})
 	}
-	OnMessage(data) {
+
+	OnMessage(/**@type {ReceiverMessage}*/ data) {
 		switch (data.type) {
 		case 0:
 			this.OnDone(data)
@@ -84,14 +104,15 @@ export class Controller {
 			throw new Error('invalid message type: ' + data)
 		}
 	}
-	OnDone(data) {
+
+	OnDone(/**@type {ReceiverMessageDone}*/ data) {
 		for (const { getId, valueData } of data.results) {
-			const resolve = this.pendingGetResolves.get(getId)
+			const {objectId, path, resolve} = this.pendingGetResolves.get(getId)
 			if (!resolve)
 				throw new Error('invalid get id')
-			let val = this.UnwrapArg(valueData)
+			let val = this.UnwrapArg(valueData, objectId, path)
 			this.pendingGetResolves.delete(getId)
-			resolve.func(val)
+			resolve(val)
 		}
 		const flushId = data.flushId
 		const flushResolve = this.pendingFlushResolves.get(flushId)
@@ -100,27 +121,19 @@ export class Controller {
 		this.pendingFlushResolves.delete(flushId)
 		flushResolve(undefined)
 	}
-	OnCallback(data) {
-		const func = this.idToCallback.get(data.id)
-		if (!func)
+
+	OnCallback(/**@type {ReceiverMessageCallback}*/ data) {
+		const resolve = this.idToCallback.get(data.id)
+		if (!resolve)
 			throw new Error('invalid callback id')
-		const args = data.args.map(arg => this.UnwrapArg(arg))
-		func(...args)
-	}
-	AddGet(objectId, path) {
-		const getId = Math.random() * Number.MAX_SAFE_INTEGER
-		this.AddToQueue({
-			type: 2,
-			objectId: objectId,
-			path: path,
-			getId: getId
-		})
-		return new Promise(resolve => {
-			this.pendingGetResolves.set(getId, resolve)
-		})
+		let args = data.args.map(arg => this.UnwrapArg(arg))
+		resolve(...args)
 	}
 }
-export function fnArg(scope, fn) {
+
+globalThis.functionSymbol = Symbol()
+
+export function fnArg(/**@type {any}*/ scope, /**@type {Function}*/ fn) {
 	let ret = () => {
 		return {
 			func: fn.toString(),

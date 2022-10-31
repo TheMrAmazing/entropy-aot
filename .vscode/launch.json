@@ -12,6 +12,24 @@
 	],
 	"configurations": [
 		{
+			"name": "Tests",
+			"program": "${workspaceFolder}/src/bootstrap.js",
+			"args": ["--main", "${workspaceFolder}/src/testing/master.js"],
+			"request": "launch",
+			"skipFiles": [
+				"<node_internals>/**",
+				"node_modules/**"
+			],
+			"type": "node",
+			"runtimeExecutable": "node",
+			"killBehavior": "polite",
+			"runtimeArgs": [
+				"--inspect",
+				"--enable-source-maps"
+			],
+			"internalConsoleOptions": "openOnSessionStart"
+		},
+		{
 			"name": "Client",
 			"request": "launch",
 			"type": "msedge",

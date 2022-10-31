@@ -130,8 +130,8 @@ function transform(/**@type {string}*/ source, /**@type {string}*/ filename) {
 	})
 	return generate(ast, {sourceMaps: true, sourceFileName: filename.slice(filename.lastIndexOf('\\') + 1)}, source)
 }
-let code = fs.readFileSync(process.cwd() + '\\src\\test\\transformerTest.js').toString('utf8')
-let testTransform = transform(code, process.cwd() + '\\src\\test\\transformerTest.js')
+let code = fs.readFileSync(process.cwd() + '\\src\\testing\\transformerTest.js').toString('utf8')
+let testTransform = transform(code, process.cwd() + '\\src\\testing\\transformerTest.js')
 const dir = process.cwd()[0].toUpperCase() + process.cwd().slice(1) + '\\src\\'
 const oldHook = require.extensions['.js']
 require.extensions['.js'] = (module, /**@type {string}*/ file) => {
@@ -149,10 +149,16 @@ require.extensions['.js'] = (module, /**@type {string}*/ file) => {
 	}
 }
 
-process.on('uncaughtException', function (err) {
-	console.error(err)
-})
+// process.on('uncaughtException', function (err) {
+// 	console.error(err)
+// })
 
-const index = process.argv.indexOf('--main')
-require(process.argv[index + 1])
-// const test = require('./test/transformerTest.js')
+globalThis.ProxySymbol = Symbol()
+const oldConstructor = Proxy.constructor
+Proxy.constructor = (target, handler) => {
+	let ret = oldConstructor(target, handler)
+	Object.defineProperty(ret, ProxySymbol, {enumerable: false, value: target})
+	return ret
+}
+const index = process.argv.indexOf('--main') + 1
+require(process.argv[index])

@@ -167,5 +167,5 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.\*
-entropy-db/json/*
+json/*
 package-lock.json

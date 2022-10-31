@@ -1,4 +1,5 @@
-import { Receiver } from './Receiver'
+import { Receiver } from './Receiver.js'
+
 export declare type Primitive = undefined | null | boolean | number | string | Blob | ArrayBuffer
 export declare type ObjectID = number
 export declare type CallbackID = number
@@ -51,7 +52,7 @@ export declare type ReceiverMessage =
 	ReceiverMessageCallback
 
 type ArgPrimitive = {
-	type: 0
+	type: 0 //Primitive
 	value: Primitive
 }
 
@@ -61,15 +62,16 @@ type ArgObject = {
 	refs: Map<string, Object>
 }
 
-type ArgRemoteObject = {
-	type: 2 //RemoteObject
-	value: ObjectID
-}
-
-type ArgRemoteProperty = {
-	type: 3 //RemoteProperty
+type ArgRemote = {
+	type: 2 //Remote
 	value: ObjectID
 	path: PathType
+}
+
+type ArgFunction = {
+	type: 3 //Function
+	scope: Object
+	func: string
 }
 
 type ArgCallback = {
@@ -77,47 +79,26 @@ type ArgCallback = {
 	value: CallbackID
 }
 
-type ArgFunction = {
-	type: 5 //Function
-	scope: Object
-	func: string
-}
-
-type ArgReturnPrimitive = {
-	type: 6 //ReturnPrimitive
-	value: Primitive
-	getId: GetID
-}
-
-type ArgReturnObject = {
-	type: 7 //ReturnObject
-	root: Object,
-	refs: Map<string, Object>,
-	getId: GetID
-}
-
 export declare type Arg = 
 	ArgPrimitive |
 	ArgObject |
-	ArgRemoteObject |
-	ArgRemoteProperty |
-	ArgCallback |
+	ArgRemote |
 	ArgFunction |
-	ArgReturnPrimitive |
-	ArgReturnObject
+	ArgCallback
 
 export declare type CommandCall = {
 	type: 0
 	objectId: ObjectID
 	path: PathType
-	argsData: Arg[]
+	argsData: (Arg | Promise<Arg>)[]
 	returnId: ObjectID
-};
+}
+
 export declare type CommandSet = {
 	type: 1
 	objectId: ObjectID
 	path: PathType
-	argsData: Arg
+	argsData: Arg | Promise<Arg>
 }
 
 export declare type CommandGet = {
@@ -131,7 +112,7 @@ export declare type CommandConstruct = {
 	type: 3
 	objectId: ObjectID
 	path: PathType
-	argsData: Arg[]
+	argsData: (Arg | Promise<Arg>)[]
 	returnId: ObjectID
 }
 
@@ -140,6 +121,12 @@ export declare type Command =
 	CommandSet |
 	CommandGet |
 	CommandConstruct
+
+export declare type Resolve = {
+	objectId: number, 
+	path: string[], 
+	resolve: (value: any) => void
+}
 
 type RemoteParams<P extends readonly any[]> = {
 	[key in keyof P]: (Remote<P[key]> | P[key])
