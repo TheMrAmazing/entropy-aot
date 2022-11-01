@@ -1,11 +1,8 @@
 import { fork } from 'child_process'
 import { randomUUID } from 'crypto'
-import {readdir, stat, writeFile, rmSync, existsSync, rmdirSync, mkdirSync} from 'fs'
+import {readdir, stat, writeFile, rmSync, existsSync, mkdirSync, rm} from 'fs'
 let abort = new AbortController()
-
-const cleanupFiles = []
-const cleanupFolders = []
-
+const noOp = () => {}
 function callback() {
 	cleanupFiles.forEach(file => {
 		if(existsSync(file)) {
@@ -31,6 +28,92 @@ process.on('uncaughtException', function(e) {
 	callback()
 })
 
+const cleanupFiles = []
+const cleanupFolders = []
+
+function runTest (runFile, name, func, options = {partner: [], before: []}) {
+	let finished = new AbortController()
+	let end
+	let timeout = setTimeout(() => {
+		if(!finished.signal.aborted) {
+			console.log( '\u001b[33m~ '+ name +': timed out\u001b[0m' )
+			end()
+		}
+	}, 30000)
+	const {partner, before} = options
+	const port = (Math.floor(Math.random() * 45151) + 4000).toString()
+	const evalFile = runFile.slice(0, runFile.lastIndexOf('\\')) + '\\' + randomUUID() + '.js'
+	const tempFolder = process.cwd() + '/' + randomUUID() + '/'
+	if (!existsSync(tempFolder)) {
+		mkdirSync(tempFolder)
+	}
+	 end = () => {
+		finished.abort()
+		clearTimeout(timeout)
+		if(existsSync(evalFile)) {
+			rm(evalFile, noOp)
+		}
+		if(existsSync(tempFolder)) {
+			rm(tempFolder, {recursive: true, force: true}, noOp)
+		}
+	}
+	writeFile(evalFile , 'eval(process.env.func)()', () => {
+		cleanupFiles.push(evalFile)
+		cleanupFolders.push(tempFolder)
+		if(partner.length > 0) {
+			partner.forEach((fn) => {
+				const partnerProcess = fork(
+					'./src/bootstrap.js', 
+					['--main', evalFile], {
+						signal: finished.signal,
+						env: {func: fn, tempFolder, port},
+						silent: true
+					}
+				)
+				partnerProcess.on('error', () => {})
+				partnerProcess.stderr.on('data', e => {
+					console.log(e.toString())
+				})
+				partnerProcess.stdout.on('data', data => {
+					// console.log(data.toString())
+				})
+			})
+		}
+		if(before.length > 0) {
+			func = 'async () => {\n' +
+				before.map(fn => 'await (' + fn + ')()\n').join() + '\n' +
+				`await (${func})()}`
+		}
+
+		const testCase = fork(
+			'./src/bootstrap.js',
+			 ['--main', evalFile], {
+				signal: finished.signal,
+				env: {func, tempFolder, port}, 
+				silent: true
+			}
+		)
+
+		testCase.stderr.on('data', e => {
+			console.log(e.toString())
+		})
+
+		testCase.stdout.on('data', data => {
+			// console.log(data.toString())
+		})
+
+		testCase.on('error', () => {})
+
+		testCase.on('message', (/**@type {any}*/ message) => {
+			if(message.result) {
+				console.log( '\u001b[32m\u2714 '+ name +'\u001b[0m' )
+			} else {
+				console.log( '\x1b[31m\u2718 '+ name +'\u001b[0m' )
+			}
+			end()
+		})
+	})
+}
 
 function runTests(/**@type {string}*/ dir) {
 	readdir(dir, (err, files) => {
@@ -41,32 +124,32 @@ function runTests(/**@type {string}*/ dir) {
 					if (stats.isDirectory()) {
 						runTests(file)
 					} else {
-						
-						setTimeout(() => {
-							abort.abort()
-						}, 10000)
 						if (file.endsWith('.test.js')) {
 							const runFile = file[0].toUpperCase() + file.slice(1)
-							const testProcess = fork('./src/bootstrap.js', ['--main', runFile], { signal: abort.signal})
-							testProcess.on('message', (/**@type {any}*/ test) => {
-								const {name, func} = test
-								const evalFile = runFile.slice(0, runFile.lastIndexOf('\\')) + '\\' + randomUUID() + '.js'
-								const dbfolder = process.cwd() + '/' + randomUUID() + '/'
-								if (!existsSync(dbfolder)) {
-									mkdirSync(dbfolder)
+							const testProcess = fork(
+								'./src/bootstrap.js',
+								['--main', runFile]
+							)
+							const tests = []
+							const partnerProcesses = []
+							const befores = []
+							testProcess.on('message', (/**@type {any}*/ helper) => {
+								switch(helper.type) {
+									case 0:
+										tests.push({name: helper.name, func: helper.func})
+										break
+									case 1:
+										partnerProcesses.push(helper.func)
+										break
+									case 2:
+										befores.push(helper.func)
 								}
-								writeFile(evalFile , 'eval(process.env.func)()', () => {
-									cleanupFiles.push(evalFile)
-									cleanupFolders.push(dbfolder)
-									console.log('Running: ' + name)
-									const testCase = fork('./src/bootstrap.js', ['--main', evalFile], {signal: abort.signal, env: {func, folder: dbfolder}, silent: true})
-									testCase.stdout.on('data', data => {
-										console.log(data.toString())
-									})
-									testCase.stderr.on('data', e => {
-										console.error(e.toString())
-									})
-								}) 
+
+							})
+							testProcess.on('exit', () => {
+								tests.forEach(test => {
+									runTest(runFile, test.name, test.func, {partner: partnerProcesses, before: befores})
+								})
 							})
 						}
 					}

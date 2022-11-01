@@ -6,7 +6,7 @@ export class tdb extends BaseEntity {
 	/**@type {User[]}*/ users
 	/**@type {Domain[]}*/ domains
 	constructor() {
-		super(process.env.folder)
+		super(process.env.tempFolder)
 		if (this.users == undefined) {
 			this.users = []
 		}
