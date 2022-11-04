@@ -30,6 +30,7 @@ export function check(val1, val2) {
 	
 		})
 	} catch (e) {
+		console.error(e)
 		process.send({
 			result: false// fail
 		})

@@ -132,7 +132,7 @@ function transform(/**@type {string}*/ source, /**@type {string}*/ filename) {
 }
 let code = fs.readFileSync(process.cwd() + '\\src\\testing\\transformerTest.js').toString('utf8')
 let testTransform = transform(code, process.cwd() + '\\src\\testing\\transformerTest.js')
-const dir = process.cwd()[0].toUpperCase() + process.cwd().slice(1) + '\\src\\'
+const dir = process.cwd() + '\\src\\'
 const oldHook = require.extensions['.js']
 require.extensions['.js'] = (module, /**@type {string}*/ file) => {
 	if(file.startsWith(dir)) {
@@ -149,10 +149,14 @@ require.extensions['.js'] = (module, /**@type {string}*/ file) => {
 	}
 }
 
-// process.on('uncaughtException', function (err) {
-// 	console.error(err)
-// })
 
+const tests = process.argv.indexOf('--tests')
+if (tests == -1) {
+	process.on('uncaughtException', function (err) {
+		console.error(err)
+	})
+	require('./dev/reload.js').hotReload(process.cwd() + '\\src\\')
+}
 globalThis.ProxySymbol = Symbol()
 const oldConstructor = Proxy.constructor
 Proxy.constructor = (target, handler) => {

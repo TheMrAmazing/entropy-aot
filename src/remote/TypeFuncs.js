@@ -8,10 +8,7 @@ export function isPrimitive(o) {
 		type === 'string' ||
 		o instanceof Date ||
 		o instanceof RegExp ||
-		o instanceof ArrayBuffer ||
-		o instanceof Array ||
-		o instanceof Map ||
-		o instanceof Set
+		o instanceof ArrayBuffer 
 	)
 }
 

@@ -1,16 +1,5 @@
-import { Domain } from '../../entities/Domain.js'
-import { User } from '../../entities/User.js'
-import { BaseEntity } from '../../database/BaseEntity.js'
-
-class TestDB extends BaseEntity {
+class TestDB {
 	users = []
-	constructor() {
-		if(process.env.tempFolder) {
-			super(process.env.tempFolder)
-		} else {
-			super(process.cwd() + '/json/')
-		}
-	}
 	testFunc() {
 		return {prop: 'I am a new object property'}
 	}

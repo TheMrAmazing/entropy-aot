@@ -14,7 +14,9 @@ async function decycle(obj) {
 	const paths = new WeakMap()
 
 	const replacer = async (path, value) => {
-		if (isObject(value) && !value.$ref) {
+		if(isPrimitive(value)) {
+			return value
+		} else if (typeof value == 'object' && !value.$ref) {
 			if (value?.then) {
 				value = await value
 			}
@@ -23,7 +25,6 @@ async function decycle(obj) {
 			}
 			if(value.$ref) {
 				let pointer = toPointer(path)
-				value = value[ProxySymbol]
 				paths.set(value, pointer)
 				refs.set(pointer, value)
 			}
@@ -95,36 +96,32 @@ export async function WrapArg(arg) {
 		throw new Error('invalid argument')
 }
 
-export function recycle(/**@type {Object}*/ root, /**@type {Map<string, Object>}*/ refs, /**@type {Controller}*/ controller, objectId, basePath, ) {
-	refs. forEach((val, key) => {
-		const path = key.split('#')[1].split('/')
-		let base = root
-		let step
-		path.forEach((i) => {
-			step = i
-			if (i) {
-				if (base[step]) {
-					base = base[step]
-				} else {
-					base[step] = {}
-					base = base[step]
+export function recycle(/**@type {Object}*/ root, /**@type {Map<string, Object>}*/ refs, /**@type {Controller}*/ controller, objectId, basePath) {
+	let seen = new Set()
+	const cycle = (base) => {
+		if(base && base.$ref) {
+			if (refs.has(base.$ref)) {
+				let next = refs.get(base.$ref)
+				if(!seen.has(base.$ref)) {
+					seen.add(base.$ref)
+					if(typeof next == 'object') {
+						Object.entries(next).forEach(prop => {
+							next[prop[0]] = cycle(prop[1])
+						})
+					}
+				}
+				return next
+			} else {
+				if(basePath) {
+					const path = base.$ref.split('#')[1].split('/').filter(str => str != '')
+					const proxyPath = [...path]
+					// return new Remote(controller, objectId, proxyPath)
+					return base
 				}
 			}
-		})
-		if (isObject(val)) {
-			Object.entries(val).forEach(prop => {
-				if(prop[1] && prop[1].$ref) {
-					base[prop[0]] = new Remote(controller, objectId, [...basePath, ...path.filter(str => (str == '') ? false : true), prop[0]])
-				} else {
-					base[prop[0]] = prop[1]
-				}
-			})
-		} else if (step) {
-			base[step] = val
+		} else {
+			return base
 		}
-		if (base.$ref) {
-			delete base.$ref
-		}
-	})
-	return root
+	}
+	return cycle(root)
 }

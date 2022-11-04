@@ -29,14 +29,14 @@ export function Remote(/**@type {Controller}*/ controller, /**@type {number}*/ o
 			if (key === ProxySymbol) {
 				return target
 			} else if (key == 'then'){
+				const getId = Math.random() * Number.MAX_SAFE_INTEGER
+				controller.AddToQueue({
+					type: 2,
+					objectId: this.objectId,
+					path: this.path,
+					getId: getId
+				})
 				return (resolve, reject) => {
-					const getId = Math.random() * Number.MAX_SAFE_INTEGER
-					controller.AddToQueue({
-						type: 2,
-						objectId: this.objectId,
-						path: this.path,
-						getId: getId
-					})
 					controller.pendingGetResolves.set(getId, {
 						objectId: this.objectId,
 						path: this.path,
@@ -49,14 +49,12 @@ export function Remote(/**@type {Controller}*/ controller, /**@type {number}*/ o
 		},
 		set: (/**@type {Remote}*/ target, key, value) => {
 			const nextPath = target.path.slice()
-			if (value) {
-				controller.AddToQueue({
-					type: 1,
-					objectId: this.objectId,
-					path: nextPath,
-					argsData: WrapArgOrCallback(value)
-				})
-			}
+			controller.AddToQueue({
+				type: 1,
+				objectId: this.objectId,
+				path: [...nextPath, key],
+				argsData: WrapArgOrCallback(value)
+			})
 			return true
 		},
 		apply: (/**@type {Remote}*/ target, thisArg, args) => {
@@ -86,17 +84,17 @@ export function Remote(/**@type {Controller}*/ controller, /**@type {number}*/ o
 			})
 			return new Remote(controller, returnId, [])
 		},
-		construct: (/**@type {Remote}*/ target, args, newTarget) => {
-			const returnId = Math.random() * Number.MAX_SAFE_INTEGER
-			controller.AddToQueue({
-				type: 3,
-				objectId: this.objectId,
-				path: this.path,
-				argsData: args.map(arg => WrapArgOrCallback(arg)),
-				returnId
-			})
-			return new Remote(controller, returnId)
-		}
+		// construct: (/**@type {Remote}*/ target, args, newTarget) => {
+		// 	const returnId = Math.random() * Number.MAX_SAFE_INTEGER
+		// 	controller.AddToQueue({
+		// 		type: 3,
+		// 		objectId: this.objectId,
+		// 		path: this.path,
+		// 		argsData: args.map(arg => WrapArgOrCallback(arg)),
+		// 		returnId
+		// 	})
+		// 	return new Remote(controller, returnId)
+		// }
 	}
 	/**@type {any}*/ const func = async function () {}
 	func.objectId = objectId

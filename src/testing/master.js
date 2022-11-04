@@ -64,7 +64,7 @@ function runTest (runFile, name, func, options = {partner: [], before: []}) {
 			partner.forEach((fn) => {
 				const partnerProcess = fork(
 					'./src/bootstrap.js', 
-					['--main', evalFile], {
+					['--main', evalFile, "--tests"], {
 						signal: finished.signal,
 						env: {func: fn, tempFolder, port},
 						silent: true
@@ -72,7 +72,7 @@ function runTest (runFile, name, func, options = {partner: [], before: []}) {
 				)
 				partnerProcess.on('error', () => {})
 				partnerProcess.stderr.on('data', e => {
-					console.log(e.toString())
+					console.error(e.toString())
 				})
 				partnerProcess.stdout.on('data', data => {
 					// console.log(data.toString())
@@ -87,7 +87,7 @@ function runTest (runFile, name, func, options = {partner: [], before: []}) {
 
 		const testCase = fork(
 			'./src/bootstrap.js',
-			 ['--main', evalFile], {
+			 ['--main', evalFile, "--tests"], {
 				signal: finished.signal,
 				env: {func, tempFolder, port}, 
 				silent: true
@@ -95,7 +95,7 @@ function runTest (runFile, name, func, options = {partner: [], before: []}) {
 		)
 
 		testCase.stderr.on('data', e => {
-			console.log(e.toString())
+			console.error(e.toString())
 		})
 
 		testCase.stdout.on('data', data => {
@@ -125,10 +125,9 @@ function runTests(/**@type {string}*/ dir) {
 						runTests(file)
 					} else {
 						if (file.endsWith('.test.js')) {
-							const runFile = file[0].toUpperCase() + file.slice(1)
 							const testProcess = fork(
 								'./src/bootstrap.js',
-								['--main', runFile]
+								['--main', file, "--tests"]
 							)
 							const tests = []
 							const partnerProcesses = []
@@ -148,7 +147,7 @@ function runTests(/**@type {string}*/ dir) {
 							})
 							testProcess.on('exit', () => {
 								tests.forEach(test => {
-									runTest(runFile, test.name, test.func, {partner: partnerProcesses, before: befores})
+									runTest(file, test.name, test.func, {partner: partnerProcesses, before: befores})
 								})
 							})
 						}

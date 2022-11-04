@@ -15,10 +15,16 @@ export class Receiver {
 	}
 
 	IdToObject(id, path = []) {
+		let obj
 		if (id == 0) {
-			return require(this.remoteFile).default
+			obj = require(this.remoteFile).default
+		} else {
+			obj = this.idMap.get(id)
 		}
-		return this.idMap.get(id)
+		path.forEach(prop => {
+			obj = obj[prop]
+		})
+		return obj
 	}
 
 	GetCallbackShim(id) {

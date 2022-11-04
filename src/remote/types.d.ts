@@ -108,19 +108,19 @@ export declare type CommandGet = {
 	getId: GetID
 }
 
-export declare type CommandConstruct = {
-	type: 3
-	objectId: ObjectID
-	path: PathType
-	argsData: (Arg | Promise<Arg>)[]
-	returnId: ObjectID
-}
+// export declare type CommandConstruct = {
+// 	type: 3
+// 	objectId: ObjectID
+// 	path: PathType
+// 	argsData: (Arg | Promise<Arg>)[]
+// 	returnId: ObjectID
+// }
 
 export declare type Command = 
 	CommandCall |
 	CommandSet |
-	CommandGet |
-	CommandConstruct
+	CommandGet 
+	// CommandConstruct
 
 export declare type Resolve = {
 	objectId: number, 

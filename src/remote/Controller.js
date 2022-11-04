@@ -66,11 +66,13 @@ export class Controller {
 	}
 
 	async Flush() {
+		let currentCommands = this.commandQueue
+		this.commandQueue = []
 		this.isPendingFlush = false
-		if (!this.commandQueue.length)
+		if (!currentCommands.length)
 			return Promise.resolve()
 		const flushId = Math.random() * Number.MAX_SAFE_INTEGER
-		this.commandQueue = await Promise.all(this.commandQueue.map(async (/**@type {Command}*/ command) => {
+		currentCommands = await Promise.all(currentCommands.map(async (/**@type {Command}*/ command) => {
 			switch (command.type) {
 			case 1:
 				command.argsData = await command.argsData
@@ -83,10 +85,9 @@ export class Controller {
 		}))
 		this.messenger.postMessage({
 			type: 1,
-			commands: this.commandQueue,
+			commands: currentCommands,
 			flushId: flushId
 		})
-		this.commandQueue.length = 0
 		return new Promise(resolve => {
 			this.pendingFlushResolves.set(flushId, resolve)
 		})
