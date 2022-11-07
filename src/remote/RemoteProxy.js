@@ -18,17 +18,8 @@ globalThis.ObjectMap = new Map()
 function base() {}
 
 export function Remote(/**@type {Controller}*/ controller, /**@type {number}*/ objectId, /**@type {string[]}*/ path = []) {
-	this.objectId = objectId
-	this.path = path
-	const WrapArgOrCallback = async (arg) => {
-		let ret = await WrapArg(arg)
-		if (ret.type == Args.Callback) {
-			//ret.value is actually a function, this is an ugly hack to avoid passing controller to WrapArgs (which is worse IMO)
-			//@ts-ignore
-			ret.value = controller.GetCallbackId(ret.value)
-		}
-		return ret
-	}
+	this.$objectId = objectId
+	this.$path = path
 	/**@type {ProxyHandler}*/ const remote = {
 		get: (/**@type {Remote}*/ target, key, receiver) => {
 			if (key === ProxySymbol) {
@@ -37,44 +28,44 @@ export function Remote(/**@type {Controller}*/ controller, /**@type {number}*/ o
 				const getId = Math.random() * Number.MAX_SAFE_INTEGER
 				controller.AddToQueue({
 					type: 2,
-					objectId: this.objectId,
-					path: this.path,
+					objectId: this.$objectId,
+					path: this.$path,
 					getId: getId
 				})
 				return async (resolve, reject) => {
 					controller.pendingGetResolves.set(getId, {
-						objectId: this.objectId,
-						path: this.path,
+						objectId: this.$objectId,
+						path: this.$path,
 						resolve
 					})
 				}
 			} else {
-				return new Remote(controller, this.objectId, [...this.path, key.toString()])
+				return new Remote(controller, this.$objectId, [...this.$path, key.toString()])
 			}
 		},
 		set: (/**@type {Remote}*/ target, key, value) => {
-			const nextPath = target.path.slice()
+			const nextPath = target.$path.slice()
 			controller.AddToQueue({
 				type: 1,
-				objectId: this.objectId,
+				objectId: this.$objectId,
 				path: [...nextPath, key],
-				argsData: WrapArgOrCallback(value)
+				argsData: WrapArg(value, controller)
 			})
 			return true
 		},
 		apply: (/**@type {Remote}*/ target, thisArg, args) => {
-			if (this.path[this.path.length - 1] == 'then') {
-				this.path.pop()
+			if (this.$path[this.$path.length - 1] == 'then') {
+				this.$path.pop()
 				const getId = Math.random() * Number.MAX_SAFE_INTEGER
 				controller.AddToQueue({
 					type: 2,
-					objectId: this.objectId,
-					path: this.path,
+					objectId: this.$objectId,
+					path: this.$path,
 					getId: getId
 				})
 				controller.pendingGetResolves.set(getId, {
-					objectId: this.objectId,
-					path: this.path,
+					objectId: this.$objectId,
+					path: this.$path,
 					resolve: args[0]
 				}) 
 				return undefined
@@ -82,9 +73,9 @@ export function Remote(/**@type {Controller}*/ controller, /**@type {number}*/ o
 			const returnId = Math.random() * Number.MAX_SAFE_INTEGER
 			controller.AddToQueue({
 				type: 0,
-				objectId: this.objectId,
-				path: this.path,
-				argsData: args.map(arg => WrapArgOrCallback(arg)),
+				objectId: this.$objectId,
+				path: this.$path,
+				argsData: args.map(arg => WrapArg(arg, controller)),
 				returnId
 			})
 			return new Remote(controller, returnId, [])
@@ -93,19 +84,18 @@ export function Remote(/**@type {Controller}*/ controller, /**@type {number}*/ o
 			const returnId = Math.random() * Number.MAX_SAFE_INTEGER
 			controller.AddToQueue({
 				type: 3,
-				objectId: this.objectId,
-				path: this.path,
-				argsData: args.map(arg => WrapArgOrCallback(arg)),
+				objectId: this.$objectId,
+				path: this.$path,
+				argsData: args.map(arg => WrapArg(arg, controller)),
 				returnId
 			})
 			return new Remote(controller, returnId)
 		}
 	}
 	/**@type {any}*/ const func = function () {}
-	func.objectId = objectId
-	func.path = path
-	func.$ref = toPointer(path)
+	func.$objectId = objectId
+	func.$path = path
 	let ret = new Proxy(func, remote)
-	controller.finalizationRegistry.register(ret, this.objectId)
+	controller.finalizationRegistry.register(ret, this.$objectId)
 	return ret
 }

@@ -57,9 +57,8 @@ type ArgPrimitive = {
 }
 
 type ArgObject = {
-	type: 1 //Object
 	root: Object
-	refs: Map<string, Object>
+	refs: Object
 }
 
 type ArgRemote = {
@@ -80,11 +79,7 @@ type ArgCallback = {
 }
 
 export declare type Arg = 
-	ArgPrimitive |
-	ArgObject |
-	ArgRemote |
-	ArgFunction |
-	ArgCallback
+	ArgObject
 
 export declare type CommandCall = {
 	type: 0

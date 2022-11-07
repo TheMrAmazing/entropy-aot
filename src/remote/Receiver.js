@@ -1,12 +1,14 @@
 /**@typedef {import('./types').Arg} Arg*/
+/**@typedef {import('./types').CommandConstruct} CommandConstruct*/
 import { Remote } from './RemoteProxy.js'
-import { recycle, WrapArg } from './WrapArg.js'
+import { UnwrapArg, WrapArg } from './WrapArg.js'
 import { Args } from './TypeFuncs.js'
 
 export class Receiver {
 	messenger
 	idMap
 	/**@type {string}*/ remoteFile
+	/**@type {'Receiver'}*/ remoterType = 'Receiver'
 
 	constructor(remoteFile, Shim, ...args) {
 		this.remoteFile = remoteFile
@@ -29,35 +31,12 @@ export class Receiver {
 
 	GetCallbackShim(id) {
 		return async (...args) => {
-			let wrappedArgs = await Promise.all(args.map(async arg => await WrapArg(arg)))
+			let wrappedArgs = await Promise.all(args.map(async arg => await WrapArg(arg, this)))
 			this.messenger.postMessage({
 				type: 1, //ReceiverMessageCallback
 				id: id,
 				args: wrappedArgs
 			})}
-	}
-
-	makeFunction(scope, func) {
-		let keys = Object.keys(scope)
-		let values = Object.values(scope)
-		return new Function(...keys, 'return ' + func.toString())(...values)
-	}
-
-	UnwrapArg(/**@type {Arg}*/ arg) {
-		switch (arg.type) {
-		case Args.Primitive:
-			return arg.value
-		case Args.Object:
-			return recycle(arg.root, arg.refs)
-		case Args.Remote:
-			return this.IdToObject(arg.value, arg.path)
-		case Args.Function:
-			return this.makeFunction(arg.scope, arg.func)
-		case Args.Callback:
-			return this.GetCallbackShim(arg.value)
-		default:
-			throw new Error('invalid arg type')
-		}
 	}
 
 	async OnMessage(data) {
@@ -110,10 +89,10 @@ export class Receiver {
 		}
 	}
 
-	Construct(command) {
+	Construct(/**@type {CommandConstruct}*/ command) {
 		const { type, objectId, path, argsData, returnId } = command
 		const obj = this.IdToObject(objectId)
-		const args = argsData.map(arg => this.UnwrapArg(arg))
+		const args = argsData.map((/**@type {Arg}*/ arg) => UnwrapArg(arg.root, arg.refs, this))
 		const methodName = path[path.length - 1]
 		let base = obj
 		for (let i = 0, len = path.length - 1; i < len; ++i) {
@@ -126,7 +105,7 @@ export class Receiver {
 	Call(command) {
 		const { type, objectId, path, argsData, returnId } = command
 		const obj = this.IdToObject(objectId)
-		const args = argsData.map(arg => this.UnwrapArg(arg))
+		const args = argsData.map((/**@type {Arg}*/ arg) => UnwrapArg(arg.root, arg.refs, this))
 		const methodName = path[path.length - 1]
 		let base = obj
 		for (let i = 0, len = path.length - 1; i < len; ++i) {
@@ -139,7 +118,7 @@ export class Receiver {
 	Set(command) {
 		const { type, objectId, path, argsData } = command
 		const obj = this.IdToObject(objectId)
-		const value = this.UnwrapArg(argsData)
+		const value = UnwrapArg(argsData.root, argsData.refs, this)
 		const propertyName = path[path.length - 1]
 		let base = obj
 		for (let i = 0, len = path.length - 1; i < len; ++i) {
@@ -155,7 +134,7 @@ export class Receiver {
 			obj = await obj
 		}
 		if (path == undefined || path.length < 1) {
-			let val = await WrapArg(obj)
+			let val = await WrapArg(obj, this)
 			getResults.push({
 				getId,
 				valueData: val
@@ -168,7 +147,7 @@ export class Receiver {
 			base = base[path[i]]
 		}
 		obj = await base[propertyName]
-		let val = await WrapArg(obj)
+		let val = await WrapArg(obj, this)
 		getResults.push({
 			getId,
 			valueData: val

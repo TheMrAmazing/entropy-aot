@@ -6,14 +6,19 @@
 /**@typedef {import('./types').Resolve} Resolve*/
 import { Remote } from './RemoteProxy.js'
 import { Args } from './TypeFuncs.js'
-import { recycle } from './WrapArg.js'
+import { WrapArg, UnwrapArg} from './WrapArg.js'
 
 export class Controller {
+	constructor() {
+		Reflect.setPrototypeOf(this, Controller.prototype)
+		return this
+	}
 	/**@type {Command[]}*/ commandQueue = []
 	/**@type {Map<Function, number>}*/ callbackToId = new Map()
 	/**@type {Map<number, Function>}*/ idToCallback = new Map()
 	/**@type {Map<number, Resolve>}*/ pendingGetResolves = new Map()
 	/**@type {Map<number, Function>}*/ pendingFlushResolves = new Map()
+	/**@type {'Controller'}*/ remoterType = 'Controller'
 	isPendingFlush = false
 	messenger
 	finalizeTimerId
@@ -52,17 +57,6 @@ export class Controller {
 			this.idToCallback.set(id, func)
 		}
 		return id
-	}
-
-	UnwrapArg(/**@type {Arg}*/ arg, objectId, path) {
-		switch (arg.type) {
-		case Args.Primitive:
-			return arg.value
-		case Args.Object:
-			return recycle(arg.root, arg.refs, this, objectId, path)
-		default:
-			throw new Error('invalid arg type')
-		}
 	}
 
 	async Flush() {
@@ -111,7 +105,7 @@ export class Controller {
 			const {objectId, path, resolve} = this.pendingGetResolves.get(getId)
 			if (!resolve)
 				throw new Error('invalid get id')
-			let val = this.UnwrapArg(valueData, objectId, path)
+			let val = UnwrapArg(valueData.root, valueData.refs, this)
 			this.pendingGetResolves.delete(getId)
 			resolve(val)
 		}
@@ -127,7 +121,7 @@ export class Controller {
 		const resolve = this.idToCallback.get(data.id)
 		if (!resolve)
 			throw new Error('invalid callback id')
-		let args = data.args.map(arg => this.UnwrapArg(arg))
+		let args = data.args.map((/**@type {Arg}*/ arg) => UnwrapArg(arg.root, arg.refs, this))
 		resolve(...args)
 	}
 }

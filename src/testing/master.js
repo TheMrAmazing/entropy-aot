@@ -39,7 +39,7 @@ function runTest (runFile, name, func, options = {partner: [], before: []}) {
 			console.log( '\u001b[33m~ '+ name +': timed out\u001b[0m' )
 			end()
 		}
-	}, 30000)
+	}, 45000)
 	const {partner, before} = options
 	const port = (Math.floor(Math.random() * 45151) + 4000).toString()
 	const evalFile = runFile.slice(0, runFile.lastIndexOf('\\')) + '\\' + randomUUID() + '.js'
