@@ -52,9 +52,23 @@ export default class Header extends Component {
 					menu([
 						li({ on: { click: e => router.push('') } }, 'Account Settings'),
 						state.domain?.channel ? li({ on: { click: e => router.push('channel') } }, 'Channel Settings') :
-							li({ on: { click: state.domain ? this.createChannel : this.domainDialog.open } }, 'Create Channel'),
+							li({ on: { click: async e => {
+								if(state.domain) {
+									this.createChannel(e)
+								} else {
+									await this.domainDialog.open()
+									this.createChannel(e)
+								}	
+							}  } }, 'Create Channel'),
 						state.domain?.developer ? li({ on: { click: e => router.push('developer') } }, 'Developer Account') :
-							li({ on: { click: state.domain ? this.createDeveloper : this.domainDialog.open } }, 'Create Developer Account'),
+							li({ on: { click: async e => {
+								if(state.domain) {
+									this.createDeveloper()
+								 } else {
+									await this.domainDialog.open()
+									this.createDeveloper()
+								 }  
+							} } }, 'Create Developer Account'),
 						li({ on: { click: e => this.logout() } }, 'Log Out'),
 						li('Admin') 
 					])

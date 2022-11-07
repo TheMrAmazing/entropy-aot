@@ -2,6 +2,10 @@ import { Controller } from './Controller.js'
 import { Args } from './TypeFuncs.js'
 import { WrapArg } from './WrapArg.js'
 
+function toPointer(/**@type {string[]}*/ parts) {
+	return '#' + parts.map(part => String(part).replace(/~/g, '~0').replace(/\//g, '~1')).join('/')
+}
+
 globalThis.ProxySymbol = Symbol()
 const oldConstructor = Proxy.constructor
 Proxy.constructor = (target, handler) => {
@@ -11,6 +15,7 @@ Proxy.constructor = (target, handler) => {
 }
 
 globalThis.ObjectMap = new Map()
+function base() {}
 
 export function Remote(/**@type {Controller}*/ controller, /**@type {number}*/ objectId, /**@type {string[]}*/ path = []) {
 	this.objectId = objectId
@@ -36,7 +41,7 @@ export function Remote(/**@type {Controller}*/ controller, /**@type {number}*/ o
 					path: this.path,
 					getId: getId
 				})
-				return (resolve, reject) => {
+				return async (resolve, reject) => {
 					controller.pendingGetResolves.set(getId, {
 						objectId: this.objectId,
 						path: this.path,
@@ -84,21 +89,22 @@ export function Remote(/**@type {Controller}*/ controller, /**@type {number}*/ o
 			})
 			return new Remote(controller, returnId, [])
 		},
-		// construct: (/**@type {Remote}*/ target, args, newTarget) => {
-		// 	const returnId = Math.random() * Number.MAX_SAFE_INTEGER
-		// 	controller.AddToQueue({
-		// 		type: 3,
-		// 		objectId: this.objectId,
-		// 		path: this.path,
-		// 		argsData: args.map(arg => WrapArgOrCallback(arg)),
-		// 		returnId
-		// 	})
-		// 	return new Remote(controller, returnId)
-		// }
+		construct: (/**@type {Remote}*/ target, args, newTarget) => {
+			const returnId = Math.random() * Number.MAX_SAFE_INTEGER
+			controller.AddToQueue({
+				type: 3,
+				objectId: this.objectId,
+				path: this.path,
+				argsData: args.map(arg => WrapArgOrCallback(arg)),
+				returnId
+			})
+			return new Remote(controller, returnId)
+		}
 	}
-	/**@type {any}*/ const func = async function () {}
+	/**@type {any}*/ const func = function () {}
 	func.objectId = objectId
 	func.path = path
+	func.$ref = toPointer(path)
 	let ret = new Proxy(func, remote)
 	controller.finalizationRegistry.register(ret, this.objectId)
 	return ret

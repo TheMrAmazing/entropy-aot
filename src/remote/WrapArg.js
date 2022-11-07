@@ -5,46 +5,54 @@ function toPointer(/**@type {string[]}*/ parts) {
 	return '#' + parts.map(part => String(part).replace(/~/g, '~0').replace(/\//g, '~1')).join('/')
 }
 
-/**@returns {Promise<{root: Object, refs: Map<string, Object>}>}*/
+/**@returns {Promise<{root: Object, refs: Object}>}*/
 async function decycle(obj) {
 	if(isPrimitive(obj)) {
 		return await obj
 	}
-	const refs = new Map()
+	const refs = {}
 	const paths = new WeakMap()
 
 	const replacer = async (path, value) => {
-		if(isPrimitive(value)) {
-			return value
-		} else if (typeof value == 'object' && !value.$ref) {
-			if (value?.then) {
-				value = await value
-			}
-			if(value[ProxySymbol]) {
-				value = value[ProxySymbol]
-			}
-			if(value.$ref) {
-				let pointer = toPointer(path)
-				paths.set(value, pointer)
-				refs.set(pointer, value)
-			}
-			let seen = paths.get(value)
-			if (seen) {
-				value = { $ref: seen }
-			}
-			else {
-				let pointer = toPointer(path)
-				paths.set(value, pointer)
-				await Promise.all(Object.keys(value).map(async key => value[key] = await replacer([...path, key], value[key])))
-				refs.set(pointer, value)
-				value = { $ref: pointer }
+		let ret = value
+		if(isPrimitive(ret)) {
+			return ret
+		}
+		if(ret[ProxySymbol]) {
+			ret = ret[ProxySymbol]
+		}
+		if (ret?.then) {
+			ret = await ret
+			if(ret[ProxySymbol]) {
+				ret = ret[ProxySymbol]
 			}
 		}
-		return value
+		if(ret.$ref) {
+			let pointer = toPointer(path)
+			return {$ref: pointer} 
+		}
+		let seen = paths.get(ret)
+		if (seen) {
+			return { $ref: seen }
+		}
+		else {
+			let pointer = toPointer(path)
+			paths.set(ret, pointer)
+			let res
+			if(ret instanceof Array) {
+				res = []
+				await Promise.all(ret.map(async (val, i) => res.push(await replacer([...path, i.toString()], val))))
+			} else {
+				res = {}
+				await Promise.all(Object.keys(ret).map(async key => res[key] = await replacer([...path, key], ret[key])))
+			}
+			refs[pointer] = res
+			return { $ref: pointer }
+		}
 	}
-
+	let root = await replacer([], obj) 
 	return {
-		root: await replacer([], obj),
+		root,
 		refs
 	}
 }
@@ -96,32 +104,34 @@ export async function WrapArg(arg) {
 		throw new Error('invalid argument')
 }
 
-export function recycle(/**@type {Object}*/ root, /**@type {Map<string, Object>}*/ refs, /**@type {Controller}*/ controller, objectId, basePath) {
+export function recycle(/**@type {Object}*/ root, /**@type {Object}*/ refs, /**@type {Controller}*/ controller, objectId, basePath) {
 	let seen = new Set()
 	const cycle = (base) => {
 		if(base && base.$ref) {
-			if (refs.has(base.$ref)) {
-				let next = refs.get(base.$ref)
+			if (refs[base.$ref]) {
+				let next = refs[base.$ref]
 				if(!seen.has(base.$ref)) {
 					seen.add(base.$ref)
-					if(typeof next == 'object') {
+					if(typeof next == 'object' && next.$ref == undefined) {
 						Object.entries(next).forEach(prop => {
 							next[prop[0]] = cycle(prop[1])
 						})
 					}
 				}
-				return next
-			} else {
-				if(basePath) {
+				if(next.$ref) {
 					const path = base.$ref.split('#')[1].split('/').filter(str => str != '')
 					const proxyPath = [...path]
-					// return new Remote(controller, objectId, proxyPath)
-					return base
+					return new Remote(controller, objectId, proxyPath)
 				}
+				return next
 			}
-		} else {
-			return base
+			else {
+				const path = base.$ref.split('#')[1].split('/').filter(str => str != '')
+				const proxyPath = [...path]
+				return new Remote(controller, objectId, proxyPath)
+			}
 		}
+		return base
 	}
 	return cycle(root)
 }

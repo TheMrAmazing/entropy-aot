@@ -20,6 +20,11 @@ export default class DomainDialog extends Component {
 	}
 	open() {
 		domainDialog.showModal()
+		return new Promise((resolve, reject) => {
+			domainDialog.addEventListener('close', () => {
+				resolve(domainDialog.returnValue)
+			})
+		})
 	}
 	render() {
 		return dialog('#domainDialog', [

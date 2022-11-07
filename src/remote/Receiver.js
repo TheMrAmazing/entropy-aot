@@ -110,19 +110,6 @@ export class Receiver {
 		}
 	}
 
-	Call(command) {
-		const { type, objectId, path, argsData, returnId } = command
-		const obj = this.IdToObject(objectId)
-		const args = argsData.map(arg => this.UnwrapArg(arg))
-		const methodName = path[path.length - 1]
-		let base = obj
-		for (let i = 0, len = path.length - 1; i < len; ++i) {
-			base = base[path[i]]
-		}
-		const ret = base[methodName](...args)
-		this.idMap.set(returnId, ret)
-	}
-
 	Construct(command) {
 		const { type, objectId, path, argsData, returnId } = command
 		const obj = this.IdToObject(objectId)
@@ -133,6 +120,19 @@ export class Receiver {
 			base = base[path[i]]
 		}
 		const ret = new base[methodName](...args)
+		this.idMap.set(returnId, ret)
+	}
+
+	Call(command) {
+		const { type, objectId, path, argsData, returnId } = command
+		const obj = this.IdToObject(objectId)
+		const args = argsData.map(arg => this.UnwrapArg(arg))
+		const methodName = path[path.length - 1]
+		let base = obj
+		for (let i = 0, len = path.length - 1; i < len; ++i) {
+			base = base[path[i]]
+		}
+		const ret = base[methodName](...args)
 		this.idMap.set(returnId, ret)
 	}
 
@@ -167,7 +167,7 @@ export class Receiver {
 		for (let i = 0, len = path.length - 1; i < len; ++i) {
 			base = base[path[i]]
 		}
-		obj = base[propertyName]
+		obj = await base[propertyName]
 		let val = await WrapArg(obj)
 		getResults.push({
 			getId,

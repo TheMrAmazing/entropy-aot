@@ -135,6 +135,7 @@ let testTransform = transform(code, process.cwd() + '\\src\\testing\\transformer
 const dir = process.cwd() + '\\src\\'
 const oldHook = require.extensions['.js']
 require.extensions['.js'] = (module, /**@type {string}*/ file) => {
+	// console.log(file)
 	if(file.startsWith(dir)) {
 		const oldCompile = module._compile
 		module._compile = (/**@type {string}*/ oldCode, /**@type {string}*/ filename) => {
