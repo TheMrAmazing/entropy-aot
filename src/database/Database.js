@@ -15,8 +15,6 @@ export class Database extends BaseEntity {
 	Channel = channelCons
 	Developer = developerCons
 	
-	/**@type {User[]}*/ users
-	/**@type {Domain[]}*/ domains
 	constructor() {
 		super(process.cwd() + '/json/')
 		if (this.users == undefined) {

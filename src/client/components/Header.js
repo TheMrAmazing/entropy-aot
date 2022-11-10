@@ -14,7 +14,8 @@ export default class Header extends Component {
 		this.domainDialog = new DomainDialog()
 	}
 	async createDeveloper(e) {
-		state.domain.developer = await api().createDeveloper(state.sess, state.domain.handle)
+		//@ts-ignore
+		state.domain.developer = await api.createDeveloper(state.sess, state.domain.handle)
 		this.patch()
 	}
 	// admin() {
@@ -33,7 +34,7 @@ export default class Header extends Component {
 		this.patch()
 	}
 	async createChannel(e) {
-		state.domain.channel = await api().createChannel(state.sess, state.domain.handle)
+		state.domain.channel = await api.createChannel(state.sess, state.domain.handle)
 		this.patch()
 	}
 	render() {

@@ -6,12 +6,12 @@ import { Domain } from './entities/Domain.js'
 import {FileUpdate} from './dev/reload'
 import { Channel } from './entities/Channel.js'
 import { Developer } from './entities/Developer.js'
-import { ws } from './server.js'
+import { connection } from './server.js'
 /**@typedef {import('./entities/Role').Role} Role*/
 /**@typedef {import('./entities/builtin/types').ClassNode} ClassNode*/
 
-const db = ws.controller.remote
 const idMap = new Map()
+const db = connection.db
 
 function getUser(/**@type {string}*/ sess) {
 	let id = idMap.get(sess)

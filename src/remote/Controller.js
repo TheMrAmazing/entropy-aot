@@ -4,15 +4,17 @@
 /**@typedef {import('./types').ReceiverMessageCallback} ReceiverMessageCallback*/
 /**@typedef {import('./types').ReceiverMessage} ReceiverMessage*/
 /**@typedef {import('./types').Resolve} Resolve*/
+/**@typedef {import('./shims/Shim.js').Shim} Shim*/
 import { Remote } from './RemoteProxy.js'
 import { Args } from './TypeFuncs.js'
 import { WrapArg, UnwrapArg} from './WrapArg.js'
 
 export class Controller {
-	constructor() {
-		Reflect.setPrototypeOf(this, Controller.prototype)
-		return this
+	constructor(/**@type {Shim}*/ shim) {
+		this.messenger = shim
+		shim.remoter = this
 	}
+
 	/**@type {Command[]}*/ commandQueue = []
 	/**@type {Map<Function, number>}*/ callbackToId = new Map()
 	/**@type {Map<number, Function>}*/ idToCallback = new Map()
@@ -20,26 +22,28 @@ export class Controller {
 	/**@type {Map<number, Function>}*/ pendingFlushResolves = new Map()
 	/**@type {'Controller'}*/ remoterType = 'Controller'
 	isPendingFlush = false
-	messenger
-	finalizeTimerId
+	/**@type {Shim}*/ messenger
+	finalizeTimerId = -1
 	finalizeIntervalMs = 10
 	/**@type {number[]}*/ finalizeIdQueue = []
 
 	finalizationRegistry = new FinalizationRegistry((/**@type {number}*/ id) => {
 		this.finalizeIdQueue.push(id)
 		if (this.finalizeTimerId === -1) {
-			this.finalizeTimerId = setTimeout(() => {
+			this.finalizeTimerId = 1
+			//@ts-ignore
+			setTimeout(() => {
 				this.finalizeTimerId = -1
 				this.messenger.postMessage({
 					type: 0,
 					ids: this.finalizeIdQueue	
 				})
-				this.finalizeIdQueue.length = 0
+				this.finalizeIdQueue = []
 			}, this.finalizeIntervalMs)
 		}
 	})
 
-	remote = new Remote(this, 0)
+	/**@type {import('./types').RemoteRoot<any>}*/ remote = new Remote(this, 0)
 
 	AddToQueue(/**@type {Command}*/ command) {
 		this.commandQueue.push(command)

@@ -96,6 +96,9 @@ export function Remote(/**@type {Controller}*/ controller, /**@type {number}*/ o
 	func.$objectId = objectId
 	func.$path = path
 	let ret = new Proxy(func, remote)
-	controller.finalizationRegistry.register(ret, this.$objectId)
+	//so that objectId 0 does not get registered for cleanup
+	if(objectId) {
+		controller.finalizationRegistry.register(ret, objectId)
+	}
 	return ret
 }

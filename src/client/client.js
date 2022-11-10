@@ -21,11 +21,7 @@ requestAnimationFrame(() => {
 		document.head.appendChild(styleEl)
 	})
 })
-// let user = await get('/api/users/me')
-// if (user && user.status == undefined) {
-// 	state.user = user
-// 	state.domain = user.domain
-// }
+
 const container = document.body
 const vnode = router.h()
 patch(container, vnode)

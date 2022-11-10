@@ -1,22 +1,24 @@
 import {Controller, fnArg} from '../Controller.js'
-import {WSController} from '../shims/WSController.js'
+import { WebSocketServer } from 'ws'
+import {ReconnectingWS} from '../shims/ReconnectingWS.js'
 import {Receiver} from '../Receiver.js'
-import {WSReceiver} from '../shims/WSReceiver.js'
+import {WSShim} from '../shims/WSShim.js'
 import {test, check, partnerProcessForEach, beforeEach} from '../../testing/helpers.js'
+import {WebSocket} from 'ws'
 
 partnerProcessForEach(() => {
-	const receiver = new Receiver('./test/testobj.js', WSReceiver, parseInt(process.env.port))
+	const port = parseInt(process.env.port)
+	const wss = new WebSocketServer({ port })
+	wss.on('connection', ws => {
+		new Receiver('./test/testobj.js', new WSShim(ws))
+	})
 })
 
 beforeEach(async () => {
-	let ws = new WSController()
-	await ws.connect(`ws://localhost:${process.env.port}/`)
-	globalThis.db = ws.controller.remote
+	let ws = new ReconnectingWS(WebSocket)
+	let controller = new Controller(new WSShim(await ws.connect(`ws://localhost:${process.env.port}/`)))
+	globalThis.db = controller.remote
 })
-
-// ==========================================================
-// should remote args be allowed to be nested?
-// ==========================================================
 
 test('get string', async() => {
 	check(await globalThis.db.users[0].email, 'test1')

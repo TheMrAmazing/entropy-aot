@@ -1,18 +1,20 @@
 /**@typedef {import('./types').Arg} Arg*/
 /**@typedef {import('./types').CommandConstruct} CommandConstruct*/
+/**@typedef {import('./shims/Shim.js').Shim} Shim*/
 import { Remote } from './RemoteProxy.js'
 import { UnwrapArg, WrapArg } from './WrapArg.js'
 import { Args } from './TypeFuncs.js'
 
 export class Receiver {
-	messenger
+	/**@type {Shim}*/ messenger
 	idMap
 	/**@type {string}*/ remoteFile
 	/**@type {'Receiver'}*/ remoterType = 'Receiver'
 
-	constructor(remoteFile, Shim, ...args) {
+	constructor(remoteFile, /**@type {Shim}*/ shim) {
 		this.remoteFile = remoteFile
-		new Shim(this, ...args)
+		this.messenger = shim
+		shim.remoter = this
 		this.idMap = new Map()
 	}
 
@@ -66,6 +68,7 @@ export class Receiver {
 	}
 
 	OnCleanupMessage(data) {
+		console.log(data)
 		for (const id of data.ids)
 			this.idMap.delete(id)
 	}

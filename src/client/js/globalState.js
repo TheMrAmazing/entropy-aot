@@ -1,11 +1,13 @@
 ///<reference path="../../entities/User.js" />
-/**@typedef {import('../../entities/Domain').Domain} Domain*/
+import { Controller } from '../../remote/Controller.js'
+import { BrowserWSShim } from '../../remote/shims/BrowserWSShim.js'
+import { ReconnectingWS } from '../../remote/shims/ReconnectingWS.js'
 
-import { WSController } from '../../remote/shims/BrowserController.js'
-let ws = new WSController()
-/**@return {import('../../remote/types').RemoteRoot<import('../../api').API>}*/ function api() {
-	return ws.controller.remote
-}
+/**@typedef {import('../../entities/Domain').Domain} Domain*/
+/**@typedef {import('../../api.js').API} API*/
+
+const ws = new ReconnectingWS()
+/**@type {import('../../remote/types').RemoteRoot<API>}*/ let api
 let state = {
 	// @ts-ignore
 	/**@type {string}*/ sess: undefined,
@@ -16,13 +18,15 @@ let state = {
 }
 async function start() {
 	await ws.connect('ws://localhost:1337')
-	api().fileChangeEvent((/**@type {string}*/ e) => {
+	const controller = new Controller(new BrowserWSShim(await ws.connect('ws://localhost:1337')))
+	api = controller.remote
+	api.fileChangeEvent((/**@type {string}*/ e) => {
 		let file = e.slice(e.lastIndexOf('\\') + 1, e.lastIndexOf('.'))
 		if(componentRegistry.get(file)) {
 			setTimeout(() => componentRegistry.get(file)?.forEach(comp => comp.patch()), 200)
 		}
 	})
-	let x = await api().me('test')
+	let x = await api.me('test')
 }
 
 start()
