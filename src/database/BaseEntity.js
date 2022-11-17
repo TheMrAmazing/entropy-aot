@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, writeFileSync, promises } from 'node:fs'
+import { existsSync, readFileSync, writeFileSync, promises, mkdirSync } from 'fs'
 
 function isObject(value) {
 	return typeof value === 'object'
@@ -31,6 +31,9 @@ export function BaseEntity(dir) {
 			}
 			return {}
 		}
+	}
+	if (!existsSync(dir)){
+		mkdirSync(dir);
 	}
 	let base = getRef('#')
 	let keys = Reflect.ownKeys(base).filter(key => {
