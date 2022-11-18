@@ -33,7 +33,7 @@ export function BaseEntity(dir) {
 		}
 	}
 	if (!existsSync(dir)){
-		mkdirSync(dir);
+		mkdirSync(dir)
 	}
 	let base = getRef('#')
 	let keys = Reflect.ownKeys(base).filter(key => {
@@ -81,12 +81,10 @@ export function BaseEntity(dir) {
 						return proxy
 					}
 				}
-				// console.log(target)
 				return target[key]
 			},
 			set: (target, key, value) => {
 				target[key] = replacer([...path, key], value)
-				// console.log(target)
 				if (isObject(target)) {
 					let pointer = toPointer([...path])
 					this.refs.set(pointer, target)

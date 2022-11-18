@@ -51,15 +51,23 @@ export class Router extends Component {
 		this.routes = routes
 		this.loadInitialRoute()
 		this.lastURL = ''
+		window.onpopstate = e => {
+			this.gotoPath()
+			this.patch()
+		}
 	}
-	/**@param {string[]} urlSegments*/
-	loadRoute(...urlSegments) {
-		const matchedRoute = this.matchUrlToRoute(urlSegments)
+
+	loadRoute(/**@type {string[]}*/ ...urlSegments) {
 		const url = `/${urlSegments.join('/')}`
 		if (url != this.lastURL) {
 			history.pushState({}, '', this.baseURL + url)
 		}
 		this.lastURL = url
+		this.changeRoute(...urlSegments)
+	}
+
+	changeRoute(/**@type {string[]}*/ ...urlSegments) {
+		const matchedRoute = this.matchUrlToRoute(urlSegments)
 		if (typeof matchedRoute.component == 'function') {
 			matchedRoute.component = matchedRoute.component()
 		}
@@ -70,8 +78,8 @@ export class Router extends Component {
 		this.component = matchedRoute.component
 		this.slot = matchedRoute.slot
 	}
-	/**@param {string[]} urlSegments*/
-	push(...urlSegments) {
+
+	push(/**@type {string[]}*/ ...urlSegments) {
 		this.loadRoute(...urlSegments)
 		this.patch()
 	}
@@ -87,11 +95,14 @@ export class Router extends Component {
 		})
 		return matchedRoute
 	}
-	loadInitialRoute() {
+	gotoPath() {
 		const pathnameSplit = window.location.pathname.split('/')
 		const pathSegments = pathnameSplit.length > 1 ? pathnameSplit.slice(1) : ''
+		return this.changeRoute(...pathSegments)
+	}
+	loadInitialRoute() {
 		this.baseURL = window.location.origin
-		return this.loadRoute(...pathSegments)
+		return this.gotoPath()
 	}
 
 	render() {

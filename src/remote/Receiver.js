@@ -68,7 +68,6 @@ export class Receiver {
 	}
 
 	OnCleanupMessage(data) {
-		console.log(data)
 		for (const id of data.ids)
 			this.idMap.delete(id)
 	}

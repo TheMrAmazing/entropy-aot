@@ -197,6 +197,8 @@ dialog:modal {
 	padding-bottom: var(--h);
 	padding-left: calc(2 * var(--w));
 	padding-right: calc( 2* var(--w));
+
+	background-color: var(--surface);
 }
 
 dialog {
@@ -214,6 +216,18 @@ dialog {
 dialog:not([open]) {
 	display: none;
 }
+dialog::before {
+	content: " ";
+	position: absolute;
+	left: 0px;
+	top: 0;
+	opacity: 0.5;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	background: url(../assets/scanline.png);
+	background-repeat: repeat;
+}
 
 h1{
 	grid-column-start: 1;
@@ -221,8 +235,8 @@ h1{
 	justify-self: center;
 }
 form {
-	/* display: grid; */
-	/* grid-template-columns: auto; */
+	display: grid;
+	grid-template-columns: auto;
 	grid-template-rows: repeat(auto-fit, auto);
 }
 input {
