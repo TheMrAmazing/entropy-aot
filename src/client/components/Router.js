@@ -8,7 +8,7 @@ import Widgets from '../views/Channel/Widgets.js'
 
 const Routes = [
 	{
-		path: '/',
+		path: '',
 		component: () => { return new Browse() }
 	},
 	{
@@ -39,13 +39,10 @@ const Routes = [
 ]
 
 export class Router extends Component {
-	/**@type {string} */
-	baseURL
+	/**@type {string}*/	baseURL
 	routes
-	/**@type {string} */
-	lastURL = ''
-	/**@type {string[]} */
-	route
+	/**@type {string}*/	lastURL = ''
+	/**@type {string[]}*/ route
 	component
 	slot
 
@@ -81,7 +78,7 @@ export class Router extends Component {
 	/**@param {string[]} urlSegments*/
 	matchUrlToRoute(urlSegments) {
 		const matchedRoute = this.routes.find(route => {
-			const routePathSegments = route.path.split('/').slice(1)
+			const routePathSegments = route.path.split('/')
 			if (routePathSegments.length !== urlSegments.length) {
 				return false
 			}

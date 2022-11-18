@@ -12,7 +12,6 @@ export default class NewProjectDialog extends Component {
 	}
 	async submit(e) {
 		e.preventDefault()
-		let vals = Object.entries(e.target)
 		// .filter(tar => tar[1].constructor.name == 'HTMLInputElement')
 		// .map(tar => tar[1].value)
 		// state.user = await post('/api/login', { email: vals[0], password: vals[1]})
@@ -20,9 +19,8 @@ export default class NewProjectDialog extends Component {
 		newProjectDialog.close()
 	}
 	async open(e) {
-		e.stopPropagation()
 		newProjectDialog.showModal()
-		document.addEventListener('click', this.clickOutside)
+		// document.addEventListener('click', e => this.clickOutside(e))
 		return new Promise((resolve, reject) => {
 			newProjectDialog.addEventListener('close', () => {
 				resolve(newProjectDialog.returnValue)
@@ -31,13 +29,21 @@ export default class NewProjectDialog extends Component {
 	}
 	render() {
 		return dialog('#newProjectDialog', [
-			form({ attrs: { method: 'dialog' }, on: { submit: e => this.submit(e) } }, [
-				h1('Create New Project'),
-				label('username'), input({ attrs: { value: 'david.bell@chthonicsoftware.com' } }),
-				label('password'), input({ attrs: { value: 'test' } }),
-				h('text-input'),
-				div([
-					button({ attrs: { type: 'submit' } }, 'submit'),
+			h('b-stepper', [
+				h('b-step', [
+					span({attrs: {slot: 'title'}}, ['I am step 2']),
+					div({attrs: {slot: 'content'}}, [
+						label('Name'), input(),
+						label('Description'), input(),
+					])
+				]),
+				h('b-step', [
+					span({attrs: {slot: 'title'}}, ['I am step 1']), 
+					div({attrs: {slot: 'content'}}, [
+						div([
+							h('file-input')
+						])
+					])
 				])
 			])
 		])
