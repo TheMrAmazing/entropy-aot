@@ -10,10 +10,11 @@ export default class LoginDialog extends Component {
 	}
 	async submit(e) {
 		e.preventDefault()
-		let vals = Object.entries(e.target)
-			.filter(tar => tar[1].constructor.name == 'HTMLInputElement')
-			.map((tar) => tar[1].value)
-		let x = api.login(vals[0], vals[1])
+		let fd = new FormData(e.target)
+		// fd.forEach((val, key) => {
+		// 	console.log(key + ': ' + val)
+		// })
+		let x = api.login(/**@type {string}*/ (fd.get('username')), /**@type {string}*/ (fd.get('password')))
 		let ret = await x
 		let sess = ret.sess
 		let user = ret.user
@@ -36,8 +37,8 @@ export default class LoginDialog extends Component {
 		return dialog('#loginDialog', [
 			form({ attrs: { method: 'dialog' }, on: { submit: e => this.submit(e) } }, [
 				h1('Login'),
-				label('username'), input({ attrs: { value: 'david.bell@chthonicsoftware.com' } }),
-				label('password'), input({ attrs: { value: 'test' } }),
+				label('username'), input({ attrs: { name: 'username', value: 'david.bell@chthonicsoftware.com' } }),
+				label('password'), input({ attrs: { name: 'password', value: 'test' } }),
 				div([
 					button({ attrs: { type: 'submit' } }, 'submit'),
 					button({ on: { click: this.registerDialog.open } }, 'register'),

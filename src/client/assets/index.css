@@ -200,7 +200,6 @@ dialog:modal {
 }
 
 dialog {
-
 	grid-auto-flow: row;
 	position: absolute;
 	left: 0px;
@@ -222,8 +221,8 @@ h1{
 	justify-self: center;
 }
 form {
-	display: grid;
-	grid-template-columns: auto;
+	/* display: grid; */
+	/* grid-template-columns: auto; */
 	grid-template-rows: repeat(auto-fit, auto);
 }
 input {
@@ -340,3 +339,4 @@ aside li {
 terminal-input {
 	width:100%;
 }
+
