@@ -27,8 +27,8 @@ export default class Browse extends Component {
 			show(bmap, this.image)
 		}) : undefined
 		return body([
-			// div('.overlay.glow'),
-			// div('.overlay.scanlines'),
+			div('.overlay.glow'),
+			div('.overlay.scanlines'),
 			this.header.h(),
 			main([
 				canvas('#bmap')
