@@ -27,7 +27,7 @@ function setWatcher(/**@type {string}*/ file) {
 				if(debounce.get(file)) {
 					fileUpdated.dispatchEvent(new FileUpdate(file))
 					debounce.set(file, false)
-					setTimeout(() => {debounce.set(file, true)}, 100)
+					setTimeout(() => {debounce.set(file, true)}, 10)
 				}
 			})
 		}

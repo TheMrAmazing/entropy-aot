@@ -11,6 +11,8 @@ export default class Developer extends Component {
 	}
 	render() {
 		return body([
+			div('.overlay.glow'),
+			div('.overlay.scanlines'),
 			this.header.h(),
 			main([
 				this.newProjectDialog.h()

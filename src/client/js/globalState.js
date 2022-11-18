@@ -23,7 +23,7 @@ async function start() {
 	api.fileChangeEvent((/**@type {string}*/ e) => {
 		let file = e.slice(e.lastIndexOf('\\') + 1, e.lastIndexOf('.'))
 		if(componentRegistry.get(file)) {
-			setTimeout(() => componentRegistry.get(file)?.forEach(comp => comp.patch()), 200)
+			setTimeout(() => componentRegistry.get(file)?.forEach(comp => comp.patch()), 10)
 		}
 	})
 	let x = await api.me('test')

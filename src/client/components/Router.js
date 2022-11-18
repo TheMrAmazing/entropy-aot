@@ -1,6 +1,6 @@
 import { Component } from './Component.js'
 import Browse from '../views/Browse.js'
-import Channel from '../views/Channel/index.js'
+import Channel from '../views/Channel/Channel.js'
 import Developer from '../views/Developer.js'
 import Live from '../views/Channel/Live.js'
 import Settings from '../views/Channel/Settings.js'

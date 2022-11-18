@@ -135,7 +135,6 @@ export async function WrapArg(arg, /**@type {Controller | Receiver}*/ remoter) {
 
 		let seen = paths.get(ret)
 		if (seen) {
-			console.log(seen)
 			return {
 				$type: 0, 
 				$ref: seen 

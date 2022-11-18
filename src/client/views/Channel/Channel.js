@@ -10,8 +10,8 @@ export default class Channel extends Component {
 	render(slots) {
 		let selected = router.route[1]
 		return body([
-			// div('.overlay.glow'),
-			// div('.overlay.scanlines'),
+			div('.overlay.glow'),
+			div('.overlay.scanlines'),
 			this.header.h(),
 			aside('.ascii-border-solid', [
 				nav([
