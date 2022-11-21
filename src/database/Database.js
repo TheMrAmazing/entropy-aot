@@ -8,7 +8,7 @@ const userCons = User
 const domainCons = Domain
 const channelCons = Channel
 const developerCons = Developer
-//@ts-ignore
+
 export class Database extends BaseEntity {
 	User = userCons
 	Domain = domainCons
@@ -18,10 +18,10 @@ export class Database extends BaseEntity {
 	constructor() {
 		super(process.cwd() + '/json/')
 		if (this.users == undefined) {
-			this.users = []
+			/**@type {User[]}*/ this.users = []
 		}
 		if (this.domains == undefined) {
-			this.domains = []
+			/**@type {Domain[]}*/ this.domains = []
 		}
 	}
 }

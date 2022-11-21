@@ -50,6 +50,7 @@ export class API {
 	}
 	async login(/**@type {string}*/ email, /**@type {string}*/ password) {
 		let user = await db.users.find(fnArg({ email }, val => val.email == email.toLowerCase()))
+		// user.image = 'https://media.tenor.com/NICoVNbKVGYAAAAM/profile-picture.gif'
 		if (user?.verified) {
 			if (user.password == hash(password)) {
 				let sess = crypto.randomUUID()
@@ -69,6 +70,7 @@ export class API {
 			return 'handle already exists'
 		} else {
 			let user = getUser(sess)
+			//@ts-ignore
 			let domain = new db.Domain()
 			domain.user = user
 			user.domain = domain
@@ -80,6 +82,7 @@ export class API {
 	async createChannel(/**@type {string}*/ sess, /**@type {string}*/ handle) {
 		let domain = getDomain(handle)
 		let user = getUser(sess)
+		//@ts-ignore
 		let channel = new db.Channel()
 		domain.channel = channel
 		channel.domain = domain
@@ -91,6 +94,7 @@ export class API {
 		let user = getUser(sess)
 		let developer = new Developer()
 		domain.developer = developer
+		//@ts-ignore
 		developer.domain = domain
 		return developer
 	}

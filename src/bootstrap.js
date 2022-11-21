@@ -156,7 +156,7 @@ if (tests == -1) {
 	process.on('uncaughtException', function (err) {
 		console.error(err)
 	})
-	require('./dev/reload.js').hotReload(process.cwd() + '\\src\\')
+	require('./dev/reload.js').hotReload(process.cwd() + '\\src')
 }
 globalThis.ProxySymbol = Symbol()
 const oldConstructor = Proxy.constructor
