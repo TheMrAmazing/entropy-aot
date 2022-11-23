@@ -8,10 +8,10 @@ import { Args } from './TypeFuncs.js'
 export class Receiver {
 	/**@type {Shim}*/ messenger
 	idMap
-	/**@type {string}*/ remoteFile
+	/**@type {Function}*/ remoteFile
 	/**@type {'Receiver'}*/ remoterType = 'Receiver'
 
-	constructor(remoteFile, /**@type {Shim}*/ shim) {
+	constructor(/**@type {Function}*/ remoteFile, /**@type {Shim}*/ shim) {
 		this.remoteFile = remoteFile
 		this.messenger = shim
 		shim.remoter = this
@@ -21,7 +21,7 @@ export class Receiver {
 	IdToObject(id, path = []) {
 		let obj
 		if (id == 0) {
-			obj = require(this.remoteFile).default
+			obj = this.remoteFile()
 		} else {
 			obj = this.idMap.get(id)
 		}

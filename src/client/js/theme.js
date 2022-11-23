@@ -26,6 +26,7 @@ let theme = {
 		h: 16
 	}
 }
+
 let borders = {
 	solid: {
 		background: 'transparent',

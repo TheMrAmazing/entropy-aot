@@ -1,8 +1,9 @@
-import * as path from 'node:path'
+import * as path from 'path'
 import * as crypto from 'crypto'
-import { db } from '../database/Database'
+import db from '../database/Database'
 import { readFileSync } from 'fs'
 import { createServer as createHttpServer } from 'http'
+
 function test() {
 	function inner() {
 		let db = () => { console.log(db) }

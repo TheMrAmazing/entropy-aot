@@ -10,6 +10,7 @@ export class Component {
 	key
 	initialRender = true
 	slots
+
 	h(slots) {
 		this.slots = slots
 		const me = this.render(slots)
@@ -27,10 +28,11 @@ export class Component {
 			return me
 		}
 	}
-	/**@returns {any} */
-	render(...args) {
+	
+	/**@returns {any}*/	render(...args) {
 		throw Error('abstract method')
 	}
+
 	constructor() {
 		let key = Object.getPrototypeOf(this).constructor.name
 		if (componentRegistry.get(key)) {
@@ -39,6 +41,7 @@ export class Component {
 			componentRegistry.set(key, [this])
 		}
 	}
+
 	patch() {
 		let newRender = this.render(this.slots)
 		let me = patch(this, newRender)

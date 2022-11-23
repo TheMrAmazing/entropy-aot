@@ -60,11 +60,13 @@ export class API {
 		}
 		return undefined
 	}
+	
 	fileChangeEvent(/**@type {Function}*/ cb) {
 		fileUpdated.addEventListener('fileUpdate', (/**@type {FileUpdate}*/ e) => {
 			cb(e.filename)
 		})
 	}
+
 	async createDomain(/**@type {string}*/ sess, /**@type {string}*/ handle) {
 		if(await getDomain(handle)) {
 			return 'handle already exists'
@@ -86,7 +88,7 @@ export class API {
 		let channel = new db.Channel()
 		domain.channel = channel
 		channel.domain = domain
-		return await channel
+		return channel
 	}
 
 	async createDeveloper(/**@type {string}*/ sess, /**@type {string}*/ handle) {

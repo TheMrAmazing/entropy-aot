@@ -5,6 +5,7 @@ import DomainDialog from './DomainDialog.js'
 import { post } from '../js/utils.js'
 import { router } from './Router.js'
 import { api } from '../js/globalState.js'
+
 export default class Header extends Component {
 	loginDialog
 	domainDialog
@@ -33,10 +34,12 @@ export default class Header extends Component {
 		state.domain = undefined
 		this.patch()
 	}
+
 	async createChannel(e) {
 		state.domain.channel = await api.createChannel(state.sess, state.domain.handle)
 		this.patch()
 	}
+
 	render() {
 		return header('.ascii-border-solid', [
 			div('.logo', [

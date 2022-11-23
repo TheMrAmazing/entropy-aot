@@ -1,5 +1,6 @@
 {
 	"recommendations": [
-		"moalamri.inline-fold"
+		"moalamri.inline-fold",
+		"bierner.comment-tagged-templates"
 	]
 }

@@ -1,4 +1,5 @@
 import { theme } from '../js/theme.js'
+
 class Terminal extends HTMLElement {
 	constructor() {
 		super()

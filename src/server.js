@@ -13,7 +13,7 @@ const port = 1337
 const wss = new WebSocketServer({ port })
 wss.on('connection', ws => {
 	//@ts-ignore
-	new Receiver('../api.js', new BrowserWSShim(ws))
+	new Receiver(() => require('./api.js').default, new BrowserWSShim(ws))
 })
 console.log('Listening on port: ' + port)
 
