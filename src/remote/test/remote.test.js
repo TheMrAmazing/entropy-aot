@@ -10,7 +10,7 @@ partnerProcessForEach(() => {
 	const port = parseInt(process.env.port)
 	const wss = new WebSocketServer({ port })
 	wss.on('connection', ws => {
-		new Receiver('./test/testobj.js', new WSShim(ws))
+		new Receiver(() => require('./testobj.js').default, new WSShim(ws))
 	})
 })
 
