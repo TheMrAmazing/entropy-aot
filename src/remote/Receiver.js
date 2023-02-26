@@ -1,9 +1,7 @@
 /**@typedef {import('./types').Arg} Arg*/
 /**@typedef {import('./types').CommandConstruct} CommandConstruct*/
 /**@typedef {import('./shims/Shim.js').Shim} Shim*/
-import { Remote } from './RemoteProxy.js'
 import { UnwrapArg, WrapArg } from './WrapArg.js'
-import { Args } from './TypeFuncs.js'
 
 export class Receiver {
 	/**@type {Shim}*/ messenger

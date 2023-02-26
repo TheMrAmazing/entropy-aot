@@ -4,11 +4,11 @@ import { Shim } from './Shim.js'
 /**@typedef {import('../Receiver.js').Receiver} Receiver*/
 /**@typedef {import('../Controller.js').Controller} Controller*/
 
-export class WorkerShim extends Shim {
-	constructor(/**@type {MessagePort}*/ port) {
+export class WebRTCShim extends Shim {
+	constructor(connection) {
 		super()
-		this.port = port
-		this.port.onmessage = e => {
+		this.connection = connection
+		this.connection.onmessage = e => {
 			if(this.remoter) {
 				//@ts-ignore
 				this.remoter.OnMessage(e.data)
@@ -17,7 +17,7 @@ export class WorkerShim extends Shim {
 	}
 
 	postMessage(/**@type {ControllerMessage | ReceiverMessage}*/ message) {
-		this.port.postMessage(message)
+		this.connection.send(message)
 	}
 }
 process.std

@@ -6,8 +6,7 @@
 /**@typedef {import('./types').Resolve} Resolve*/
 /**@typedef {import('./shims/Shim.js').Shim} Shim*/
 import { Remote } from './RemoteProxy.js'
-import { Args } from './TypeFuncs.js'
-import { WrapArg, UnwrapArg} from './WrapArg.js'
+import { UnwrapArg} from './WrapArg.js'
 
 export class Controller {
 	constructor(/**@type {Shim}*/ shim) {

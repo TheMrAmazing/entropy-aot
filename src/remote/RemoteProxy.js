@@ -14,9 +14,6 @@ Proxy.constructor = (target, handler) => {
 	return ret
 }
 
-globalThis.ObjectMap = new Map()
-function base() {}
-
 export function Remote(/**@type {Controller}*/ controller, /**@type {number}*/ objectId, /**@type {string[]}*/ path = []) {
 	this.$objectId = objectId
 	this.$path = path

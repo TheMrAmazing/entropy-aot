@@ -16,8 +16,8 @@ let state = {
 	// @ts-ignore
 	/**@type {Domain}*/ domain: undefined
 }
+
 async function start() {
-	await ws.connect('ws://localhost:1337')
 	const controller = new Controller(new BrowserWSShim(await ws.connect('ws://localhost:1337')))
 	api = controller.remote
 	api.fileChangeEvent((/**@type {string}*/ e) => {
@@ -26,7 +26,6 @@ async function start() {
 			setTimeout(() => componentRegistry.get(file)?.forEach(comp => comp.patch()), 10)
 		}
 	})
-	let x = await api.me('test')
 }
 
 start()

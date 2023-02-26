@@ -1,0 +1,33 @@
+import { ConnectionHandshakeData, FileChunkAccumulator, TangleConfig } from './types';
+export declare function createConnection(connectionId: string, wsURL: string, isInitiating?: boolean): Promise<WebRTCConnection>;
+declare class WebRTCConnection extends EventTarget {
+    onmessage?: (e: MessageEvent) => void;
+    onclose?: (e: MessageEvent) => void;
+    connectionId: string;
+    isInitiating: boolean;
+    rtcPeerConnection: RTCPeerConnection;
+    pendingCandidates: RTCIceCandidate[];
+    rtcDataChannel?: RTCDataChannel;
+    buffers: ArrayBuffer[];
+    accumulators: Map<number, FileChunkAccumulator>;
+    sentSnapshot: boolean;
+    config: TangleConfig;
+    internalEvents: EventTarget;
+    constructor(connectionId: string, isInitiating?: boolean);
+    onIceCandidate(event: RTCPeerConnectionIceEvent): void;
+    onDataChannel(event: RTCDataChannelEvent): void;
+    onNegotiationNeeded(_event: Event): Promise<void>;
+    setupChannel(rtcDataChannel: RTCDataChannel): void;
+    onError(event: Event): void;
+    onBufferedAmountLow(_event: Event): void;
+    processBuffers(buffers: ArrayBuffer[]): void;
+    onClose(_event: Event): void;
+    onConnectionClosed(data: any): void;
+    onOpen(_event: Event): void;
+    onDataChannelMessage(event: MessageEvent<ArrayBuffer>): void;
+    onStreamDataIn(data: any): void;
+    onConnectionStateChange(_event: Event): void;
+    onConnectionHandshakeIn(data: ConnectionHandshakeData): Promise<void>;
+    send(data: any): void;
+}
+export {};

@@ -19,15 +19,7 @@ export default class Header extends Component {
 		state.domain.developer = await api.createDeveloper(state.sess, state.domain.handle)
 		this.patch()
 	}
-	// admin() {
-	//	 if (state.user.roles) {
-	//		 let roles = state.user.roles
-	//		 let adminRole = roles.filter((role) => role.name == 'Admin')
-	//		 if (adminRole) {
-	//			 this.$router.push('/admin')
-	//		 }
-	//	 }
-	// }
+
 	async logout() {
 		await post('/api/logout')
 		state.user = undefined
