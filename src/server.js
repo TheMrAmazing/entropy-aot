@@ -23,7 +23,7 @@ export const connection = {
 }
 
 async function start() {
-	let controller = new Controller(new WSShim(await ws.connect('ws://localhost:3000/')))
+	let controller = new Controller(new WSShim(await ws.connect('ws://localhost:5000/')))
 	/**@type {import('./remote/types').RemoteRoot<Database>}*/ const db = controller.remote
 	connection.db = db
 	let email = 'david.bell@chthonicsoftware.com'

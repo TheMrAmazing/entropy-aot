@@ -1,10 +1,10 @@
 import { Component } from './Component.js'
 import Browse from '../views/Browse.js'
-import Channel from '../views/Channel/Channel.js'
-import Developer from '../views/Developer.js'
-import Live from '../views/Channel/Live.js'
-import Settings from '../views/Channel/Settings.js'
-import Widgets from '../views/Channel/Widgets.js'
+import Account from '../views/Account/Account.js'
+import Live from '../views/Account/Live.js'
+import Settings from '../views/Account/Settings.js'
+import Channel from '../views/Account/Channel.js'
+import Revenue from '../views/Account/Revenue.js'
 
 const Routes = [
 	{
@@ -12,29 +12,27 @@ const Routes = [
 		component: () => { return new Browse() }
 	},
 	{
-		path: 'developer',
-		component: () => { return new Developer() },
-		meta: {
-			requiresAuth: true
-		}
-	},
-	{
-		path: 'channel',
-		component: () => { return new Channel() },
+		path: 'account',
+		component: () => { return new Account() },
 		slot: () => new Live(),
 		meta: {
 			requiresAuth: true
 		}
 	},
 	{
-		path: 'channel/settings',
-		component: () => new Channel(),
+		path: 'account/settings',
+		component: () => new Account(),
 		slot: () => new Settings()
 	},
 	{
-		path: 'channel/widgets',
-		component: () => new Channel(),
-		slot: () => new Widgets()
+		path: 'account/channel',
+		component: () => new Account(),
+		slot: () => new Channel()
+	},
+	{
+		path: 'account/revenue',
+		component: () => new Account(),
+		slot: () => new Revenue()
 	},
 ]
 

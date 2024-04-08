@@ -46,8 +46,8 @@ export default class Header extends Component {
 				div('.hover-menu', [
 					img({ attrs: { src: state.user.image } }),
 					menu([
-						li({ on: { click: e => router.push('') } }, 'Account Settings'),
-						state.domain?.channel ? li({ on: { click: e => router.push('channel') } }, 'Channel Settings') :
+						li({ on: { click: e => router.push('account', 'settings') } }, 'Account Settings'),
+						state.domain?.channel ? li({ on: { click: e => router.push('account', 'channel') } }, 'Channel Settings') :
 							li({ on: { click: async e => {
 								if(state.domain) {
 									this.createChannel(e)
@@ -56,15 +56,6 @@ export default class Header extends Component {
 									this.createChannel(e)
 								}	
 							}  } }, 'Create Channel'),
-						state.domain?.developer ? li({ on: { click: e => router.push('developer') } }, 'Developer Account') :
-							li({ on: { click: async e => {
-								if(state.domain) {
-									this.createDeveloper()
-								 } else {
-									await this.domainDialog.open()
-									this.createDeveloper()
-								 }  
-							} } }, 'Create Developer Account'),
 						li({ on: { click: e => this.logout() } }, 'Log Out'),
 						li('Admin') 
 					])

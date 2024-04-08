@@ -10,7 +10,7 @@ import { User } from './entities/User.js'
 
 globalThis.functionSymbol = Symbol()
 
-const port = 3000
+const port = 5000
 const wss = new WebSocketServer({ port })
 wss.on('connection', ws => {
 	new Receiver(() => require('./database/Database.js').default, new WSShim(ws))

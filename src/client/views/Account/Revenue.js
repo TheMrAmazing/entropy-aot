@@ -1,11 +1,11 @@
 import { Component } from '../../components/Component.js'
-export default class Widgets extends Component {
+export default class Revenue extends Component {
 	constructor() {
 		super()
 	}
 	render(slots) {
 		return main([
-			div('I am in Widgets')
+			div('I am in Revenue')
 		])
 	}
 }

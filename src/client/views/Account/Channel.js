@@ -1,11 +1,11 @@
 import { Component } from '../../components/Component.js'
-export default class Live extends Component {
+export default class Channel extends Component {
 	constructor() {
 		super()
 	}
 	render(slots) {
 		return main([
-			div('I am in Live')
+			div('I am in Channel')
 		])
 	}
 }
