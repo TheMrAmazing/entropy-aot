@@ -5,7 +5,7 @@ export default class Settings extends Component {
 	}
 	render(slots) {
 		return main([
-			div('I am in Settings')
+			div('I am in Settings page')
 		])
 	}
 }
